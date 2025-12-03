@@ -8,12 +8,23 @@
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    
+
     <style>
         /* Override DataTables Style */
-        .dataTables_wrapper .dataTables_length select { padding-right: 2rem; border-radius: 0.5rem; }
-        .dataTables_wrapper .dataTables_filter input { padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #d1d5db; }
-        table.dataTable.no-footer { border-bottom: 1px solid #e5e7eb; }
+        .dataTables_wrapper .dataTables_length select {
+            padding-right: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+        }
+
+        table.dataTable.no-footer {
+            border-bottom: 1px solid #e5e7eb;
+        }
     </style>
 </head>
 
@@ -28,13 +39,10 @@
             <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
-                        <i class="fas fa-plane-departure text-yellow-500"></i> Setting
+                        <i class="fa-solid fa-gear text-gray-900"></i>Setting
                     </h1>
-                    <p class="text-sm text-gray-500">Manage employee leave applications</p>
+                    <p class="text-sm text-gray-500">Manage system settings and application preferences.</p>
                 </div>
-                <button id="addBtn" class="px-6 py-3 bg-yellow-500 text-white rounded-lg shadow-md hover:bg-yellow-600 transition font-semibold flex items-center gap-2">
-                    <i class="fas fa-plus"></i> Add Leave
-                </button>
             </div>
 
             <!-- Table Section -->
@@ -75,21 +83,22 @@
                                     <td class="p-4">
                                         <div class="flex justify-center items-center gap-2">
                                             {{-- Edit Button --}}
-                                            <button class="editBtn w-9 h-9 flex items-center justify-center bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition"
-                                                data-id="{{ $item->id }}"
-                                                data-employee="{{ $item->employee_id }}"
-                                                data-date="{{ $item->note_date }}"
-                                                data-type="{{ $item->type }}"
-                                                data-content="{{ $item->content }}"
-                                                title="Edit">
+                                            <button
+                                                class="editBtn w-9 h-9 flex items-center justify-center bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition"
+                                                data-id="{{ $item->id }}" data-employee="{{ $item->employee_id }}"
+                                                data-date="{{ $item->note_date }}" data-type="{{ $item->type }}"
+                                                data-content="{{ $item->content }}" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
 
                                             {{-- Delete Button --}}
-                                            <form method="post" action="{{ route('delnote', ['id' => $item->id]) }}" class="inline deleteForm">
+                                            <form method="post" action="{{ route('delnote', ['id' => $item->id]) }}"
+                                                class="inline deleteForm">
                                                 @csrf
                                                 @method('delete')
-                                                <button type="button" class="delete-confirm w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition" title="Delete">
+                                                <button type="button"
+                                                    class="delete-confirm w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition"
+                                                    title="Delete">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -105,7 +114,8 @@
     </main>
 
     <!-- ADD MODAL -->
-    <div id="addModal" class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto px-4 py-6">
+    <div id="addModal"
+        class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto px-4 py-6">
         <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative transform transition-all scale-100">
             <button id="closeAddModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition">
                 <i class="fas fa-times text-xl"></i>
@@ -114,11 +124,13 @@
                 <i class="fas fa-plane-departure text-yellow-500"></i> Add Leave Request
             </h2>
 
-            <form id="addForm" method="post" action="{{ route('postleave') }}" enctype="multipart/form-data" class="space-y-5">
+            <form id="addForm" method="post" action="{{ route('postleave') }}" enctype="multipart/form-data"
+                class="space-y-5">
                 @csrf @method('post')
 
 
-                <button type="submit" class="w-full py-3 bg-yellow-500 text-white font-bold rounded-lg shadow-md hover:bg-yellow-600 transition flex justify-center items-center gap-2">
+                <button type="submit"
+                    class="w-full py-3 bg-yellow-500 text-white font-bold rounded-lg shadow-md hover:bg-yellow-600 transition flex justify-center items-center gap-2">
                     <i class="fas fa-check"></i> Submit
                 </button>
             </form>
@@ -126,7 +138,8 @@
     </div>
 
     <!-- EDIT MODAL -->
-    <div id="editModal" class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto px-4 py-6">
+    <div id="editModal"
+        class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto px-4 py-6">
         <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative transform transition-all scale-100">
             <button id="closeModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition">
                 <i class="fas fa-times text-xl"></i>
@@ -139,7 +152,8 @@
                 @csrf @method('put')
 
 
-                <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition flex justify-center items-center gap-2">
+                <button type="submit"
+                    class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition flex justify-center items-center gap-2">
                     <i class="fas fa-save"></i> Update
                 </button>
             </form>
@@ -147,13 +161,13 @@
     </div>
 
     <!-- SCRIPTS -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
     <script>
         $(document).ready(function() {
             // Init DataTable
-            new DataTable('#myTable', {
-            });
+            new DataTable('#myTable', {});
 
             // Modal Logic
             const addModal = $('#addModal');
@@ -161,7 +175,7 @@
 
             $('#addBtn').click(() => addModal.removeClass('hidden'));
             $('#closeAddModal').click(() => addModal.addClass('hidden'));
-            
+
             // Edit Logic
             $(document).on('click', '.editBtn', function() {
                 const btn = $(this);
@@ -171,7 +185,7 @@
                 $('#editType').val(btn.data('type'));
                 $('#editReason').val(btn.data('reason'));
                 $('#editStatus').val(btn.data('status'));
-                
+
                 $('#editForm').attr('action', `/leave/${btn.data('id')}/update`);
                 editModal.removeClass('hidden');
             });
@@ -206,4 +220,5 @@
     @include('layout.loading')
 
 </body>
+
 </html>

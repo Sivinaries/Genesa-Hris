@@ -3,7 +3,7 @@
         class="font-poppins fixed inset-y-0 my-6 ml-4 w-full max-w-72 md:max-w-60 xl:max-w-64 2xl:max-w-64 z-50 rounded-lg bg-white overflow-y-scroll transform transition-transform duration-300 -translate-x-full md:translate-x-0 ease-in-out shadow-xl">
         <div class="p-2">
             <div class="p-4">
-                <a class="text-center" href="">
+                <a class="text-center" href="{{ route('dashboard') }}">
                     <h1>Damelhr</h1>
                 </a>
             </div>
