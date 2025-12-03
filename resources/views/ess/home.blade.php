@@ -12,11 +12,16 @@
     <div class="bg-sky-800 p-5 rounded-b-3xl shadow-md">
         <div class="flex justify-between items-center">
             <div. class="space-y-4">
-                <h1 class="text-2xl font-bold text-white flex items-center gap-2">
-                    <i class="fas fa-building text-white"></i>
-                    {{ $userCompany->company }}
-                </h1>
-                <p class="text-lg text-white/80">Hi, {{ auth()->user()->name }}</p>
+                <div>
+                    <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+                        <i class="fas fa-building text-white"></i>
+                        {{ $userCompany->company }}
+                    </h1>
+                </div>
+                <div>
+                    <p class="text-lg text-white/80">Hi, {{ auth()->user()->name }}</p>
+                    <p class="text-sm text-white/80">{{ auth()->user()->position }}</p>
+                </div>
             </div.>
 
             <form action="{{ route('logout') }}" method="POST">
@@ -33,7 +38,9 @@
         <div class="bg-white p-5 rounded-xl shadow-md border border-gray-100">
             <h2 class="text-lg font-bold text-gray-800 mb-3">Quick Menu</h2>
 
-            <div class="grid grid-cols-4 gap-4 text-center">
+            <div class="grid grid-cols-3 gap-4 text-center">
+
+                <!-- Attendance -->
                 <a href="" class="flex flex-col items-center gap-2">
                     <div
                         class="w-14 h-14 flex items-center justify-center bg-cyan-100 text-cyan-600 rounded-xl shadow-sm">
@@ -42,6 +49,7 @@
                     <p class="text-xs font-semibold text-gray-600">Attendance</p>
                 </a>
 
+                <!-- Leave -->
                 <a href="" class="flex flex-col items-center gap-2">
                     <div
                         class="w-14 h-14 flex items-center justify-center bg-sky-100 text-sky-600 rounded-xl shadow-sm">
@@ -50,46 +58,44 @@
                     <p class="text-xs font-semibold text-gray-600">Leave</p>
                 </a>
 
+                <!-- Payroll -->
                 <a href="" class="flex flex-col items-center gap-2">
                     <div
                         class="w-14 h-14 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-xl shadow-sm">
-                        <i class="fas fa-money-check text-xl"></i>
+                        <i class="fas fa-wallet text-xl"></i>
                     </div>
                     <p class="text-xs font-semibold text-gray-600">Payroll</p>
                 </a>
 
+                <!-- Overtime -->
                 <a href="" class="flex flex-col items-center gap-2">
                     <div
                         class="w-14 h-14 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-xl shadow-sm">
-                        <i class="fas fa-user text-xl"></i>
+                        <i class="fas fa-business-time text-xl"></i>
+                    </div>
+                    <p class="text-xs font-semibold text-gray-600">Overtime</p>
+                </a>
+
+                <!-- Note -->
+                <a href="" class="flex flex-col items-center gap-2">
+                    <div
+                        class="w-14 h-14 flex items-center justify-center bg-yellow-100 text-yellow-600 rounded-xl shadow-sm">
+                        <i class="fas fa-note-sticky text-xl"></i>
+                    </div>
+                    <p class="text-xs font-semibold text-gray-600">Note</p>
+                </a>
+
+                <!-- Profile -->
+                <a href="" class="flex flex-col items-center gap-2">
+                    <div
+                        class="w-14 h-14 flex items-center justify-center bg-gray-100 text-gray-600 rounded-xl shadow-sm">
+                        <i class="fas fa-user-circle text-xl"></i>
                     </div>
                     <p class="text-xs font-semibold text-gray-600">Profile</p>
                 </a>
 
-                <a href="" class="flex flex-col items-center gap-2">
-                    <div
-                        class="w-14 h-14 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-xl shadow-sm">
-                        <i class="fas fa-user text-xl"></i>
-                    </div>
-                    <p class="text-xs font-semibold text-gray-600">Profile</p>
-                </a>
-
-                <a href="" class="flex flex-col items-center gap-2">
-                    <div
-                        class="w-14 h-14 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-xl shadow-sm">
-                        <i class="fas fa-user text-xl"></i>
-                    </div>
-                    <p class="text-xs font-semibold text-gray-600">Profile</p>
-                </a>
-
-                <a href="" class="flex flex-col items-center gap-2">
-                    <div
-                        class="w-14 h-14 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-xl shadow-sm">
-                        <i class="fas fa-user text-xl"></i>
-                    </div>
-                    <p class="text-xs font-semibold text-gray-600">Profile</p>
-                </a>
             </div>
+
         </div>
     </div>
 
