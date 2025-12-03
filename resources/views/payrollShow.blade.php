@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Payslip - {{ $payroll->employee->name }}</title>
+    @include('layout.head')
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            #printableArea, #printableArea * { visibility: visible; }
+            #printableArea { position: absolute; left: 0; top: 0; width: 100%; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    @include('layout.sidebar')
+
+    <main class="md:ml-64 xl:ml-72 2xl:ml-72">
+        @include('layout.navbar')
+        
+        <div class="p-5">
+            <!-- Action Bar -->
+            <div class="mb-6 flex justify-between items-center">
+                <a href="{{ route('periodPayroll', ['start' => $payroll->pay_period_start, 'end' => $payroll->pay_period_end]) }}" 
+                   class="text-gray-600 hover:text-gray-900 flex items-center gap-2 no-print">
+                    <span>&larr;</span> Back to Employee List
+                </a>
+                <button onclick="window.print()" class="px-6 py-2 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-900 transition flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Print Slip
+                </button>
+            </div>
+
+            <!-- SLIP GAJI AREA -->
+            <div id="printableArea" class="max-w-4xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden border border-gray-200">
+                
+                <!-- Header Slip -->
+                <div class="bg-gray-50 p-8 border-b border-gray-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800">SALARY SLIP</h1>
+                            <p class="text-gray-500 mt-1">Period: {{ \Carbon\Carbon::parse($payroll->pay_period_start)->format('d M Y') }} - {{ \Carbon\Carbon::parse($payroll->pay_period_end)->format('d M Y') }}</p>
+                        </div>
+                        <div class="text-right">
+                            <h2 class="text-xl font-bold text-indigo-700">{{ Auth::user()->compani->name ?? 'Company Name' }}</h2>
+                            <span class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold uppercase {{ $payroll->status == 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                {{ $payroll->status }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Employee Info -->
+                <div class="p-8 border-b border-gray-200">
+                    <div class="grid grid-cols-2 gap-8">
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider">Employee Name</p>
+                            <p class="text-lg font-semibold text-gray-800">{{ $payroll->employee->name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider">Position</p>
+                            <p class="text-lg font-semibold text-gray-800">{{ $payroll->employee->position }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider">Employee ID</p>
+                            <p class="text-lg font-semibold text-gray-800">{{ $payroll->employee->nik }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider">Branch</p>
+                            <p class="text-lg font-semibold text-gray-800">{{ $payroll->employee->branch->name ?? '-' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details Table -->
+                <div class="p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        
+                        <!-- Earnings Column -->
+                        <div>
+                            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">Earnings</h3>
+                            <div class="space-y-3">
+                                {{-- Loop hanya yang allowance/base --}}
+                                @foreach($payroll->payrollDetails as $detail)
+                                    @if(in_array($detail->category, ['base', 'allowance']))
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <p class="text-gray-700 font-medium">{{ $detail->name }}</p>
+                                                @if($detail->calculation_note)
+                                                    <p class="text-xs text-gray-400">{{ $detail->calculation_note }}</p>
+                                                @endif
+                                            </div>
+                                            <p class="text-gray-800">Rp {{ number_format($detail->amount, 0, ',', '.') }}</p>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                            
+                            <!-- Total Earnings -->
+                            <div class="mt-6 pt-4 border-t border-gray-200 flex justify-between items-center">
+                                <p class="text-gray-600 font-semibold">Total Earnings</p>
+                                <p class="text-gray-800 font-bold">Rp {{ number_format($payroll->base_salary + $payroll->total_allowances, 0, ',', '.') }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Deductions Column -->
+                        <div>
+                            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">Deductions</h3>
+                            <div class="space-y-3">
+                                @php $hasDeduction = false; @endphp
+                                @foreach($payroll->payrollDetails as $detail)
+                                    @if($detail->category == 'deduction')
+                                        @php $hasDeduction = true; @endphp
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <p class="text-gray-700 font-medium">{{ $detail->name }}</p>
+                                            </div>
+                                            <p class="text-red-600">- Rp {{ number_format($detail->amount, 0, ',', '.') }}</p>
+                                        </div>
+                                    @endif
+                                @endforeach
+
+                                @if(!$hasDeduction)
+                                    <p class="text-gray-400 italic text-sm">No deductions</p>
+                                @endif
+                            </div>
+
+                            <!-- Total Deductions -->
+                            <div class="mt-6 pt-4 border-t border-gray-200 flex justify-between items-center">
+                                <p class="text-gray-600 font-semibold">Total Deductions</p>
+                                <p class="text-red-600 font-bold">- Rp {{ number_format($payroll->total_deductions, 0, ',', '.') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NET PAY (Bottom Bar) -->
+                <div class="bg-gray-50 p-8 border-t border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-500">Take Home Pay</p>
+                            <p class="text-xs text-gray-400">Transfer to Bank Account</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-3xl font-bold text-indigo-700">Rp {{ number_format($payroll->net_salary, 0, ',', '.') }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Signature (Optional) -->
+                <div class="p-8 pb-12 grid grid-cols-2 gap-8 text-center mt-8">
+                    <div>
+                        <p class="text-sm text-gray-500 mb-16">Employee Signature</p>
+                        <p class="text-sm font-bold text-gray-700 border-t border-gray-300 inline-block px-8 pt-2">{{ $payroll->employee->name }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 mb-16">Authorized Signature</p>
+                        <p class="text-sm font-bold text-gray-700 border-t border-gray-300 inline-block px-8 pt-2">HR Manager</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</body>
+</html>
