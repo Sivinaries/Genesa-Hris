@@ -219,16 +219,6 @@
         $(document).ready(function() {
             // Init DataTable (Simple Version for side list)
             new DataTable('#myTable', {
-                responsive: true,
-                paging: true, 
-                pageLength: 5, 
-                lengthMenu: [5, 10, 25],
-                columnDefs: [{ orderable: false, targets: -1 }],
-                language: {
-                    search: "",
-                    searchPlaceholder: "Search shift...",
-                    lengthMenu: "_MENU_"
-                }
             });
 
             // Modal Logic

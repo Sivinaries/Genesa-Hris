@@ -144,8 +144,6 @@
     <script>
         $(document).ready(function() {
             new DataTable('#myTable', {
-                responsive: true,
-                columnDefs: [{ orderable: false, targets: -1 }]
             });
 
             $('#addBtn').click(() => $('#addModal').removeClass('hidden'));

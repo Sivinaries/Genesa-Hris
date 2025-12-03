@@ -57,8 +57,7 @@
         <div class="p-5 space-y-4">
 
             <!-- Header & Add Button -->
-            <div
-                class="flex justify-between items-center bg-gradient-to-l from-blue-100 to-blue-50 p-4 rounded-lg shadow">
+            <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <h1 class="font-semibold text-2xl text-black">Shift</h1>
                 <button id="addBtn"
                     class="p-2 px-8 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition">
@@ -206,13 +205,6 @@
         //Table
         $(document).ready(function() {
             new DataTable('#myTable', {
-                columnDefs: [{
-                    targets: 1,
-                    render: function(data) {
-                        const date = new Date(data);
-                        return date.toLocaleDateString();
-                    },
-                }],
             });
 
             // Add modal

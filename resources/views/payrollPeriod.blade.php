@@ -14,7 +14,7 @@
         <div class="p-5 space-y-4">
 
             <!-- Header with Back Button -->
-            <div class="flex justify-between items-center bg-white p-4 rounded-lg shadow border-l-4 border-indigo-500">
+            <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <div>
                     <h1 class="font-semibold text-xl text-gray-800">Payroll Detail</h1>
                     <p class="text-sm text-indigo-600 font-bold mt-1">

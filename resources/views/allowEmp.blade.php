@@ -16,7 +16,7 @@
         <div class="p-5 space-y-4">
             
             <!-- Header & Back Button -->
-            <div class="flex justify-between items-center bg-linear-to-l from-indigo-100 to-indigo-50 p-4 rounded-lg shadow">
+            <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <div>
                     <h1 class="font-semibold text-2xl text-black">Assign Allowance</h1>
                     <p class="text-gray-600 text-sm mt-1">Employee: <span class="font-bold text-indigo-700">{{ $employee->name }}</span> ({{ $employee->position }})</p>

@@ -273,9 +273,6 @@
         $(document).ready(function() {
             // Init DataTable
             new DataTable('#myTable', {
-                responsive: true,
-                columnDefs: [{ orderable: false, targets: -1 }],
-                language: { search: "Search:", lengthMenu: "Show _MENU_ entries" }
             });
 
             // Modal Logic
