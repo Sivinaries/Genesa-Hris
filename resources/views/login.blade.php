@@ -26,10 +26,11 @@
     <div class="w-full max-w-sm bg-white rounded-2xl shadow-xl p-8 space-y-6">
 
         <!-- Logo + Title -->
-        <div class="flex items-center gap-3 border border-gray-300 rounded-2xl p-3">
-            <img class="w-16" src="{{ asset('logo.png') }}" alt="Logo">
-            <h1 class="text-2xl font-bold text-gray-800">Damelhr</h1>
+        <div class="">
+            <img class="w-fit h-32 md:w-44 md:h-fit mx-auto" src="{{ asset('logo.png') }}" alt="Logo">
         </div>
+
+            <hr class="mx-5 shadow-2xl text-gray-100 rounded-r-xl rounded-l-xl" />
 
         <!-- Heading -->
         <div>

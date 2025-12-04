@@ -5,9 +5,8 @@
             <div class="p-4">
                 <a class="" href="{{ route('dashboard') }}">
                     <!-- Logo + Title -->
-                    <div class="flex items-center gap-3 border border-gray-300 rounded-2xl p-3">
-                        <img class="w-10" src="{{ asset('logo.png') }}" alt="Logo">
-                        <h1 class="text-xl font-bold text-gray-800">Damelhr</h1>
+                    <div class="">
+                        <img class="w-32 h-fit mx-auto" src="{{ asset('logo.png') }}" alt="Logo">
                     </div>
                 </a>
             </div>
