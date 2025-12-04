@@ -26,27 +26,47 @@
 <body class="bg-gray-50 font-sans w-full md:max-w-sm mx-auto">
 
     <!-- HEADER -->
-    <div class="bg-sky-800 p-5 rounded-b-3xl shadow-md">
-        <div class="flex justify-between items-center">
-            <div class="space-y-4">
-                <div>
-                    <h1 class="text-2xl font-bold text-white flex items-center gap-2">
-                        <i class="fas fa-building text-white"></i>
-                        {{ $employee->compani->company }}
-                    </h1>
-                </div>
-                <div>
-                    <p class="text-lg text-white/80">Hi, {{ auth()->user()->name }}</p>
-                    <p class="text-sm text-white/80">{{ auth()->user()->position }}</p>
+    <div class="bg-gradient-to-br from-sky-800 to-sky-700 p-6 rounded-b-3xl shadow-xl relative overflow-hidden">
+
+        <!-- Subtle decorative circles -->
+        <div class="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="absolute -left-10 bottom-0 w-28 h-28 bg-white/5 rounded-full blur-xl"></div>
+
+        <div class="relative flex justify-between items-center">
+
+            <!-- LEFT CONTENT -->
+            <div class="space-y-3">
+                <!-- Company -->
+                <h1 class="text-2xl font-bold text-white flex items-center gap-2 drop-shadow-md">
+                    <i class="fas fa-building text-white/90"></i>
+                    {{ $employee->compani->company }}
+                </h1>
+
+                <!-- User Info -->
+                <div class="flex items-center gap-3">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=0ea5e9&color=fff"
+                        class="w-12 h-12 rounded-xl shadow-md border border-white/30" alt="avatar">
+
+                    <div>
+                        <p class="text-white text-base font-semibold leading-tight">
+                            Hi, {{ auth()->user()->name }}
+                        </p>
+                        <p class="text-sm text-white/80 leading-tight">
+                            {{ auth()->user()->position }}
+                        </p>
+                    </div>
                 </div>
             </div>
 
+            <!-- LOGOUT BUTTON -->
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button class="bg-white p-2 rounded-lg shadow hover:bg-gray-100 transition">
-                    <i class="material-icons text-black rotate-180">logout</i>
+                <button
+                    class="bg-white/90 backdrop-blur-md px-3 py-2 rounded-xl shadow-md hover:bg-white transition-all duration-200 border border-gray-100">
+                    <i class="material-icons text-black rotate-180 text-[22px]">logout</i>
                 </button>
             </form>
+
         </div>
     </div>
 

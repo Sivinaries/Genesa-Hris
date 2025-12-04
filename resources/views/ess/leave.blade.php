@@ -112,12 +112,12 @@
             <button id="closeAddModal" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition">
                 <i class="fas fa-times text-xl"></i>
             </button>
-            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">
                 <i class="fas fa-plane-departure text-yellow-500"></i> Add Leave Request
             </h2>
 
             <form id="addForm" method="post" action="{{ route('req-leave') }}" enctype="multipart/form-data"
-                class="space-y-5">
+                class="space-y-2">
                 @csrf @method('post')
 
                 <!-- AUTO-FILLED EMPLOYEE -->
@@ -135,6 +135,7 @@
                         class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-yellow-500"
                         required>
                 </div>
+                
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">End Date</label>
                     <input type="date" name="end_date"

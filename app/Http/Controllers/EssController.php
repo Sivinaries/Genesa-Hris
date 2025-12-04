@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Leave;
+use App\Models\Overtime;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -81,6 +82,30 @@ class EssController extends Controller
 
         return view('ess.overtime', compact('overtimes'));
     }
+
+    public function reqOvertime(Request $request)
+    {
+
+        $userCompany = Auth::guard('employee')->user()->compani;
+
+        $data = $request->validate([
+            'employee_id' => 'required',
+            'overtime_date' => 'required',
+            'start_time' => 'required',
+            'end_time' => 'required',
+            'status' => 'required',
+            'overtime_pay' => 'required',
+        ]);
+
+        $data['compani_id'] = $userCompany->id;
+
+        Overtime::create($data);
+
+        Cache::forget('overtimes');
+
+        return redirect(route('ess-leave'))->with('success', 'Leave successfully created!');
+    }
+
 
     public function note()
     {
