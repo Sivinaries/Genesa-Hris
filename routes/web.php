@@ -5,19 +5,20 @@ use App\Http\Controllers\EssController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\AllowController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\DeductController;
 use App\Http\Controllers\CompaniController;
 use App\Http\Controllers\PayrollController;
+use App\Http\Controllers\AllowEmpController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OvertimeController;
-use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\AllowController;
-use App\Http\Controllers\AllowEmpController;
-use App\Http\Controllers\DeductController;
 use App\Http\Controllers\DeductEmpController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\CompanyPayrollConfigController;
 
 Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -73,11 +74,11 @@ Route::middleware('auth:web')->group(function () {
     Route::put('/note/{id}/update', [NoteController::class, 'update'])->name('updatenote');
     Route::delete('/note/{id}/delete', [NoteController::class, 'destroy'])->name('delnote');
 
-    //ATTENDANCE
+     //ATTENDANCE
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
-    Route::post('/postattendance', [AttendanceController::class, 'store'])->name('postattendance');
-    Route::put('/attendance/{id}/update', [AttendanceController::class, 'update'])->name('updateattendance');
-    Route::delete('/attendance/{id}/delete', [AttendanceController::class, 'destroy'])->name('delattendance');
+    Route::get('/attendance/manage', [AttendanceController::class, 'manage'])->name('manageattendance');
+    Route::post('/attendance/store', [AttendanceController::class, 'storeBatch'])->name('postattendance');
+    Route::delete('/attendance/batch-delete', [AttendanceController::class, 'destroyPeriod'])->name('delattendance');
 
     //SHIFT
     Route::get('/shift', [ShiftController::class, 'index'])->name('shift');
@@ -131,10 +132,13 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/payrolls', [PayrollController::class, 'store'])->name('postpayroll');
     Route::get('/payrolls/{id}', [PayrollController::class, 'show'])->name('showpayroll');
     Route::delete('/payrolls/batch-delete', [PayrollController::class, 'destroyPeriod'])->name('delpayrollBatch');
-    Route::delete('/payrolls/{id}', [PayrollController::class, 'destroy'])->name('delpayroll');
+    Route::delete('/payrolls/{id}', [PayrollController::class, 'destroy'])->name(name: 'delpayroll');
 
     //ACTIVITY LOG
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activityLog');
+
+    Route::get('/companyconfig', [CompanyPayrollConfigController::class, 'index'])->name('companyconfig');
+    Route::put('/companyconfig/update', [CompanyPayrollConfigController::class, 'update'])->name('updatecompanyconfig');
 });
 
 Route::middleware('auth:employee')->group(function () {
@@ -146,6 +150,7 @@ Route::middleware('auth:employee')->group(function () {
     Route::post('/req-leave', [EssController::class, 'reqLeave'])->name('req-leave');
 
     Route::get('/ess-overtime', [EssController::class, 'overtime'])->name('ess-overtime');
+    Route::post('/req-overtime', [EssController::class, 'reqOvertime'])->name('req-overtime');
 
     Route::get('/ess-note', [EssController::class, 'note'])->name('ess-note');
 
@@ -154,6 +159,6 @@ Route::middleware('auth:employee')->group(function () {
     Route::get('/ess-organization', [EssController::class, 'organization'])->name('ess-organization');
 
     Route::get('/ess-absen', [EssController::class, 'absen'])->name('ess-absen');
-    
+
     Route::get('/ess-profil', [EssController::class, 'profil'])->name('ess-profil');
 });
