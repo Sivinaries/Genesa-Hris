@@ -133,15 +133,6 @@ class EssController extends Controller
         return view('ess.organization');
     }
 
-    public function absen()
-    {
-        if (!Auth::guard('employee')->check()) {
-            return redirect('/');
-        }
-
-        return view('ess.absen');
-    }
-
     public function profil()
     {
         if (!Auth::guard('employee')->check()) {

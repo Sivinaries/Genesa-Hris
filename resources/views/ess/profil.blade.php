@@ -98,20 +98,13 @@
 
     <!-- BOTTOM BAR -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg md:max-w-sm mx-auto">
-        <div class="grid grid-cols-3 text-center py-2">
+        <div class="grid grid-cols-2 text-center py-2">
 
             <!-- Home -->
             <a href="{{ route('ess-home') }}"
                 class="flex flex-col items-center {{ request()->routeIs('ess-home') ? 'text-sky-600' : 'text-gray-600 hover:text-sky-600' }}">
                 <i class="fas fa-home text-xl"></i>
                 <span class="text-xs font-semibold mt-1">Home</span>
-            </a>
-
-            <!-- Attendance (ACTIVE) -->
-            <a href="{{ route('ess-absen') }}"
-                class="flex flex-col items-center {{ request()->routeIs('ess-absen') ? 'text-sky-600' : 'text-gray-600 hover:text-sky-600' }}">
-                <i class="fas fa-fingerprint text-xl"></i>
-                <span class="text-xs font-semibold mt-1">Absen</span>
             </a>
 
             <!-- Profile -->

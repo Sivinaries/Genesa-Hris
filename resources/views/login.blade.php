@@ -26,8 +26,8 @@
     <div class="w-full max-w-sm bg-white rounded-2xl shadow-xl p-8 space-y-6">
 
         <!-- Logo + Title -->
-        <div class="">
-            <img class="w-fit h-32 md:w-44 md:h-fit mx-auto" src="{{ asset('logo.png') }}" alt="Logo">
+        <div class="w-44 h-20">
+            <img class="h-full w-full md:h-fit" src="{{ asset('logo.png') }}" alt="Logo">
         </div>
 
             <hr class="mx-5 shadow-2xl text-gray-100 rounded-r-xl rounded-l-xl" />

@@ -158,7 +158,5 @@ Route::middleware('auth:employee')->group(function () {
 
     Route::get('/ess-organization', [EssController::class, 'organization'])->name('ess-organization');
 
-    Route::get('/ess-absen', [EssController::class, 'absen'])->name('ess-absen');
-
     Route::get('/ess-profil', [EssController::class, 'profil'])->name('ess-profil');
 });
