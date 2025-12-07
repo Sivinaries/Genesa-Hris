@@ -52,7 +52,7 @@
                             Hi, {{ auth()->user()->name }}
                         </p>
                         <p class="text-sm text-white/80 leading-tight">
-                            {{ auth()->user()->position }}
+                            {{ auth()->user()->position->name }}
                         </p>
                     </div>
                 </div>
@@ -74,9 +74,12 @@
     <div class="p-2">
         <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-xl p-3 shadow-sm overflow-hidden">
             <div class="animate-marquee whitespace-nowrap text-sm font-semibold">
-                @foreach ($announcements as $item)
-                    📢 {{ $item->content }}
-                @endforeach
+                📢
+                @forelse ($announcements ?? [] as $item)
+                    {{ $item->content }} .
+                @empty
+                    null
+                @endforelse
             </div>
         </div>
     </div>
@@ -119,7 +122,7 @@
                 <div class="space-y-2 text-sm">
                     <div class="flex justify-between">
                         <span class="text-gray-500">Posisi</span>
-                        <span class="font-semibold">{{ $employee->position }}</span>
+                        <span class="font-semibold">{{ $employee->position->name }}</span>
                     </div>
 
                     <div class="flex justify-between">

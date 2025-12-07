@@ -25,7 +25,7 @@
             <!-- HEADER -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
-                    <i class="fa-solid fa-building-circle-check text-gray-800"></i>
+                    <i class="fas fa-building text-gray-800"></i>
                     Add Company
                 </h1>
                 <p class="text-sm text-gray-500">Register your company information accurately</p>

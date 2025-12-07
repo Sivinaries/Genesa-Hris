@@ -52,16 +52,10 @@ class Compani extends Model
         return $this->hasMany(Note::class);
     }
 
-    public function announcements()
-    {
-        return $this->hasMany(Announcement::class);
-    }
-
     public function overtimes()
     {
         return $this->hasMany(Overtime::class);
     }
-    
     public function payrolls()
     {
         return $this->hasMany(Payroll::class);
@@ -90,5 +84,10 @@ class Compani extends Model
     public function activityLogs()
     {
         return $this->hasMany(ActivityLog::class);
+    }
+
+    public function positions()
+    {
+        return $this->hasMany(Position::class);
     }
 }
