@@ -164,6 +164,6 @@ class AttendanceController extends Controller
             'created_at'    => now(),
         ]);
 
-        Cache::tags(['activities_' . $companyId])->flush();
+        Cache::forget("activities_{$companyId}");
     }
 }

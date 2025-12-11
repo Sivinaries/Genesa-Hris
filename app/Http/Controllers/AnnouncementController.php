@@ -57,7 +57,7 @@ class AnnouncementController extends Controller
             $userCompany->id
         );
 
-        Cache::forget('announcements_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('announcement'))->with('success', 'Ann created successfully!');
     }
@@ -84,7 +84,7 @@ class AnnouncementController extends Controller
             $userCompany->id
         );
 
-        Cache::forget('announcements_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('announcement'))->with('success', 'Announcement updated successfully!');
     }
@@ -105,11 +105,16 @@ class AnnouncementController extends Controller
                 "Menghapus announcement {$announcement->content}",
                 $userCompany->id
             );
-
-            Cache::forget('announcements_' . $userCompany->id);
         }
 
+        $this->clearCache($userCompany->id);
+
         return redirect(route('announcement'))->with('success', 'Announcement deleted successfully!');
+    }
+
+    private function clearCache($companyId)
+    {
+        Cache::forget("announcements_{$companyId}");
     }
 
     private function logActivity($type, $description, $companyId)
@@ -122,6 +127,6 @@ class AnnouncementController extends Controller
             'created_at'    => now(),
         ]);
 
-        Cache::tags(['activities_' . $companyId])->flush();
+        Cache::forget("activities_{$companyId}");
     }
 }

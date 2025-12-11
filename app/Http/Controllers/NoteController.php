@@ -13,7 +13,7 @@ class NoteController extends Controller
 {
     public function index()
     {
-         if (!Auth::check()) {
+        if (!Auth::check()) {
             return redirect('/');
         }
 
@@ -29,12 +29,12 @@ class NoteController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKey = 'notes_' . $userCompany->id;
+        $cacheKey = "notes_{$userCompany->id}";
 
         $notes = Cache::remember($cacheKey, 60, function () use ($userCompany) {
             return Note::with('employee')
                 ->where('compani_id', $userCompany->id)
-                ->latest('created_at') 
+                ->latest('created_at')
                 ->get();
         });
 
@@ -67,17 +67,17 @@ class NoteController extends Controller
 
         $data['compani_id'] = $userCompany->id;
 
-        $data['status'] = $request->status ?? 'active'; 
+        $data['status'] = $request->status ?? 'active';
 
         Note::create($data);
-        
+
         $this->logActivity(
-            'Create Note', 
-            "Menambahkan catatan ({$request->type}) untuk {$employee->name}", 
+            'Create Note',
+            "Menambahkan catatan ({$request->type}) untuk {$employee->name}",
             $userCompany->id
         );
 
-        Cache::forget('notes_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('note'))->with('success', 'Note created successfully!');
     }
@@ -98,10 +98,10 @@ class NoteController extends Controller
             ->firstOrFail();
 
         if ($request->employee_id != $note->employee_id) {
-             $validEmployee = Employee::where('id', $request->employee_id)
+            $validEmployee = Employee::where('id', $request->employee_id)
                 ->where('compani_id', $userCompany->id)
                 ->exists();
-             if (!$validEmployee) abort(403);
+            if (!$validEmployee) abort(403);
         }
 
         $note->update([
@@ -114,12 +114,12 @@ class NoteController extends Controller
         $empName = $note->employee->name ?? 'Unknown';
 
         $this->logActivity(
-            'Update Note', 
-            "Mengubah catatan ID #{$note->id} milik {$empName}", 
+            'Update Note',
+            "Mengubah catatan ID #{$note->id} milik {$empName}",
             $userCompany->id
         );
 
-        Cache::forget('notes_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('note'))->with('success', 'Note updated successfully!');
     }
@@ -137,15 +137,20 @@ class NoteController extends Controller
             $note->delete();
 
             $this->logActivity(
-                'Delete Note', 
-                "Menghapus catatan milik {$empName}", 
+                'Delete Note',
+                "Menghapus catatan milik {$empName}",
                 $userCompany->id
             );
-
-            Cache::forget('notes_' . $userCompany->id);
         }
 
+        $this->clearCache($userCompany->id);
+
         return redirect(route('note'))->with('success', 'Note deleted successfully!');
+    }
+
+    private function clearCache($companyId)
+    {
+        Cache::forget("notes_{$companyId}");
     }
 
     private function logActivity($type, $description, $companyId)
@@ -158,6 +163,6 @@ class NoteController extends Controller
             'created_at'    => now(),
         ]);
 
-        Cache::tags(['activities_' . $companyId])->flush();
+        Cache::forget("activities_{$companyId}");
     }
 }

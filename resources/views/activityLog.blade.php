@@ -35,7 +35,7 @@
                 <!-- Statistik Ringkas -->
                 <div class="flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-lg border border-indigo-100">
                     <span class="text-xs text-indigo-500 uppercase font-bold">Total Logs</span>
-                    <span class="text-lg font-bold text-indigo-700">{{ $logs->total() }}</span>
+                    {{-- <span class="text-lg font-bold text-indigo-700">{{ $logs->total() }}</span> --}}
                 </div>
             </div>
 
@@ -134,12 +134,12 @@
                     
                 </div>
 
-                <!-- Pagination -->
+                {{-- <!-- Pagination -->
                 @if($logs->hasPages())
                     <div class="p-4 border-t border-gray-100 bg-gray-50">
                         {{ $logs->links() }}
                     </div>
-                @endif
+                @endif --}}
             </div>
         </div>
     </main>

@@ -30,7 +30,7 @@ class EmployeeController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKey = 'employees_' . $userCompany->id;
+        $cacheKey = "employees_{$userCompany->id}";
 
         $employees = Cache::remember($cacheKey, 60, function () use ($userCompany) {
             return $userCompany->employees()->with('compani', 'branch', 'position')->get();
@@ -96,7 +96,7 @@ class EmployeeController extends Controller
             $userCompany->id
         );
 
-        Cache::forget('employees_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('employee'))->with('success', 'Employee successfully created!');
     }
@@ -170,7 +170,7 @@ class EmployeeController extends Controller
 
         $this->logActivity('Update Employee', $desc, $userCompany->id);
 
-        Cache::forget('employees_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('employee'))->with('success', 'Employee successfully updated!');
     }
@@ -188,11 +188,17 @@ class EmployeeController extends Controller
             $employee->delete();
             $this->logActivity('Delete Employee', "Menghapus karyawan: {$name}", $userCompany->id);
 
-            Cache::forget('employees_' . $userCompany->id);
             return redirect(route('employee'))->with('success', 'Employee Berhasil Dihapus!');
         }
 
+        $this->clearCache($userCompany->id);
+
         return redirect(route('employee'))->with('error', 'Employee not found or access denied.');
+    }
+
+    private function clearCache($companyId)
+    {
+        Cache::forget("employees_{$companyId}");
     }
 
     private function logActivity($type, $description, $companyId)
@@ -205,6 +211,6 @@ class EmployeeController extends Controller
             'created_at'    => now(),
         ]);
 
-        Cache::tags(['activities_' . $companyId])->flush();
+        Cache::forget("activities_{$companyId}");
     }
 }

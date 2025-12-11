@@ -28,7 +28,7 @@ class DeductController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKey = 'deductions_' . $userCompany->id;
+        $cacheKey = "deductions_{$userCompany->id}";
 
         $deductions = Cache::remember($cacheKey, 60, function () use ($userCompany) {
             return Deduct::where('compani_id', $userCompany->id)->get();
@@ -52,12 +52,12 @@ class DeductController extends Controller
 
         $this->logActivity('Create Allowance', "Menambahkan deduction baru: {$deduct->name} ({$deduct->type})", $userCompany->id);
 
-        Cache::forget('deductions_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('deduction'))->with('success', 'Deduction successfully created!');
     }
 
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         $userCompany = auth()->user()->compani;
 
@@ -85,7 +85,7 @@ class DeductController extends Controller
         $changes = [];
         foreach ($newData as $key => $value) {
             if ($oldData[$key] != $value) {
-                $fieldLabel = ucfirst(str_replace('_', ' ', $key)); 
+                $fieldLabel = ucfirst(str_replace('_', ' ', $key));
                 $changes[] = "$fieldLabel diubah dari '{$oldData[$key]}' menjadi '{$value}'";
             }
         }
@@ -95,7 +95,7 @@ class DeductController extends Controller
             $this->logActivity('Update Deduction', $descriptionString, $userCompany->id);
         }
 
-        Cache::forget('deductions_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('deduction'))->with('success', 'Deduction successfully updated!');
     }
@@ -113,13 +113,16 @@ class DeductController extends Controller
             $deduction->delete();
 
             $this->logActivity('Delete Deduction', "Menghapus deduction: {$name}", $userCompany->id);
-            
-            Cache::forget('deductions_' . $userCompany->id);
         }
 
-        Cache::forget('deductions_' . $userCompany->id);
+        $this->clearCache($userCompany->id);
 
         return redirect(route('deduction'))->with('success', 'Deduction successfully deleted!');
+    }
+
+    private function clearCache($companyId)
+    {
+        Cache::forget("deductions_{$companyId}");
     }
 
     private function logActivity($type, $description, $companyId)
@@ -132,6 +135,6 @@ class DeductController extends Controller
             'created_at'    => now(),
         ]);
 
-        Cache::tags(['activities_' . $companyId])->flush();
+        Cache::forget("activities_{$companyId}");
     }
 }

@@ -28,7 +28,7 @@ class PositionController extends Controller
             return redirect()->route('login');
         }
 
-        $cacheKey = 'positions_' . $userCompany->id;
+        $cacheKey = "positions_{$userCompany->id}";
 
         $positions = Cache::remember($cacheKey, 60, function () use ($userCompany) {
             return $userCompany->positions()->orderBy('name')->get();
@@ -43,15 +43,19 @@ class PositionController extends Controller
 
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'category' => 'required|string', 
+            'category' => 'required|string',
             'base_salary_default' => 'required|numeric|min:0',
         ]);
 
         $position = $userCompany->positions()->create($data);
 
-        $this->logActivity('Create Position', "Menambahkan jabatan baru: {$position->name}", $userCompany->id);
-        
-        Cache::forget('positions_' . $userCompany->id);
+        $this->logActivity(
+            'Create Position',
+            "Menambahkan jabatan baru: {$position->name}",
+            $userCompany->id
+        );
+
+        $this->clearCache($userCompany->id);
 
         return redirect(route('position'))->with('success', 'Position created successfully!');
     }
@@ -69,16 +73,20 @@ class PositionController extends Controller
         $position = $userCompany->positions()->findOrFail($id);
 
         $oldName = $position->name;
-        
+
         $position->update([
             'name' => $request->name,
             'category' => $request->category,
             'base_salary_default' => $request->base_salary_default,
         ]);
 
-        $this->logActivity('Update Position', "Mengubah jabatan {$oldName} menjadi {$position->name}", $userCompany->id);
-        
-        Cache::forget('positions_' . $userCompany->id);
+        $this->logActivity(
+            'Update Position',
+            "Mengubah jabatan {$oldName} menjadi {$position->name}",
+            $userCompany->id
+        );
+
+        $this->clearCache($userCompany->id);
 
         return redirect(route('position'))->with('success', 'Position updated successfully!');
     }
@@ -94,11 +102,16 @@ class PositionController extends Controller
             $position->delete();
 
             $this->logActivity('Delete Position', "Menghapus jabatan: {$name}", $userCompany->id);
-            
+
             Cache::forget('positions_' . $userCompany->id);
         }
 
         return redirect(route('position'))->with('success', 'Position deleted successfully!');
+    }
+
+    private function clearCache($companyId)
+    {
+        Cache::forget("positions_{$companyId}");
     }
 
     private function logActivity($type, $description, $companyId)
@@ -111,6 +124,6 @@ class PositionController extends Controller
             'created_at'    => now(),
         ]);
 
-        Cache::tags(['activities_' . $companyId])->flush();
+        Cache::forget("activities_{$companyId}");
     }
 }
