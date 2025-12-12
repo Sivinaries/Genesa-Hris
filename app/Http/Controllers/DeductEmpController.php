@@ -22,7 +22,7 @@ class DeductEmpController extends Controller
 
         $cacheKey = "deduct_emp_{$employeeId}";
 
-        $employeeDeductions = Cache::remember($cacheKey, 60, function () use ($employeeId) {
+        $employeeDeductions = Cache::remember($cacheKey, 180, function () use ($employeeId) {
             return DeductEmp::with('deduct')
                 ->where('employee_id', $employeeId)
                 ->get();

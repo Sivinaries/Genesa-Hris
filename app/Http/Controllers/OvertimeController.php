@@ -31,7 +31,7 @@ class OvertimeController extends Controller
 
         $cacheKey = "overtimes_{$userCompany->id}";
 
-        $overtimes = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
+        $overtimes = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return $userCompany->overtimes()->with('employee')->get();
         });
 
@@ -53,9 +53,21 @@ class OvertimeController extends Controller
             'overtime_pay' => 'required',
         ]);
 
-        $data['compani_id'] = $userCompany->id;
+        $overtime = Overtime::create([
+            'employee_id'     => $data['employee_id'],
+            'overtime_date'     => $data['overtime_date'],
+            'start_time'     => $data['start_time'],
+            'end_time'     => $data['end_time'],
+            'status'     => $data['status'],
+            'overtime_pay'     => $data['overtime_pay'],
+            'compani_id'  => $userCompany->id,
+        ]);
 
-        Overtime::create($data);
+        $this->logActivity(
+            'Create Overtime',
+            "Menambahkan overtime '{$overtime->employee->name}'",
+            $userCompany->id
+        );
 
         $this->clearCache($userCompany->id);
 
@@ -66,7 +78,7 @@ class OvertimeController extends Controller
     {
         $userCompany = auth()->user()->compani;
 
-        $request->validate([
+        $data = $request->validate([
             'employee_id' => 'required',
             'overtime_date' => 'required',
             'start_time' => 'required',
@@ -75,11 +87,26 @@ class OvertimeController extends Controller
             'overtime_pay' => 'required',
         ]);
 
-        $data = $request->only(['employee_id', 'overtime_date', 'start_time', 'end_time', 'total_hours', 'reason', 'status', 'overtime_pay']);
+        $overtime = Overtime::where('id', $id)
+            ->where('compani_id', $userCompany->id)
+            ->firstOrFail();
 
-        $data['compani_id'] = $userCompany->id;
+        $oldContent = $overtime->employee->name;
 
-        Overtime::where('id', $id)->update($data);
+        $overtime->update([
+            'employee_id'     => $data['employee_id'],
+            'overtime_date'     => $data['overtime_date'],
+            'start_time'     => $data['start_time'],
+            'end_time'     => $data['end_time'],
+            'status'     => $data['status'],
+            'overtime_pay'     => $data['overtime_pay'],
+        ]);
+
+        $this->logActivity(
+            'Update Overtime',
+            "Mengubah Overtime '{$oldContent}'",
+            $userCompany->id
+        );
 
         $this->clearCache($userCompany->id);
 
@@ -94,7 +121,7 @@ class OvertimeController extends Controller
             ->where('compani_id', $userCompany->id)
             ->first();
 
-         if ($overtime) {
+        if ($overtime) {
             $name = $overtime->employee->name;
             $overtime->delete();
 

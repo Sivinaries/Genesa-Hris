@@ -30,7 +30,7 @@ class PositionController extends Controller
 
         $cacheKey = "positions_{$userCompany->id}";
 
-        $positions = Cache::remember($cacheKey, 60, function () use ($userCompany) {
+        $positions = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return $userCompany->positions()->orderBy('name')->get();
         });
 
@@ -47,11 +47,16 @@ class PositionController extends Controller
             'base_salary_default' => 'required|numeric|min:0',
         ]);
 
-        $position = $userCompany->positions()->create($data);
+        $position = Position::create([
+            'name'     => $data['name'],
+            'category'     => $data['category'],
+            'base_salary_default'     => $data['base_salary_default'],
+            'compani_id'  => $userCompany->id,
+        ]);
 
         $this->logActivity(
             'Create Position',
-            "Menambahkan jabatan baru: {$position->name}",
+            "Menambahkan Position '{$position->name}'",
             $userCompany->id
         );
 
@@ -64,25 +69,27 @@ class PositionController extends Controller
     {
         $userCompany = auth()->user()->compani;
 
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|max:255',
             'category' => 'required|string',
             'base_salary_default' => 'required|numeric|min:0',
         ]);
 
-        $position = $userCompany->positions()->findOrFail($id);
+        $position = Position::where('id', $id)
+            ->where('compani_id', $userCompany->id)
+            ->firstOrFail();
 
-        $oldName = $position->name;
+        $oldContent = $position->name;
 
         $position->update([
-            'name' => $request->name,
-            'category' => $request->category,
-            'base_salary_default' => $request->base_salary_default,
+            'name'     => $data['name'],
+            'category'     => $data['category'],
+            'base_salary_default'     => $data['base_salary_default'],
         ]);
 
         $this->logActivity(
             'Update Position',
-            "Mengubah jabatan {$oldName} menjadi {$position->name}",
+            "Mengubah Position '{$position->name}'",
             $userCompany->id
         );
 
@@ -95,16 +102,19 @@ class PositionController extends Controller
     {
         $userCompany = auth()->user()->compani;
 
-        $position = $userCompany->positions()->find($id);
+        $position = Position::where('id', $id)
+            ->where('compani_id', $userCompany->id)
+            ->firstOrFail();
 
-        if ($position) {
-            $name = $position->name;
-            $position->delete();
+        $oldContent = $position->name;
 
-            $this->logActivity('Delete Position', "Menghapus jabatan: {$name}", $userCompany->id);
+        $position->delete();
 
-            Cache::forget('positions_' . $userCompany->id);
-        }
+        $this->logActivity(
+            'Delete Position',
+            "Menghapus position {$oldContent}'",
+            $userCompany->id
+        );
 
         return redirect(route('position'))->with('success', 'Position deleted successfully!');
     }

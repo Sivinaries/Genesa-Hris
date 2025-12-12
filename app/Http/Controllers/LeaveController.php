@@ -31,7 +31,7 @@ class LeaveController extends Controller
 
         $cacheKey = "leaves_{$userCompany->id}";
 
-        $leaves = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
+        $leaves = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return $userCompany->leaves()->with('employee')->get();
         });
 
@@ -53,15 +53,19 @@ class LeaveController extends Controller
             'status'      => 'required|string',
         ]);
 
-        $data['compani_id'] = $userCompany->id;
-
-        Leave::create($data);
-
-        $employee = Employee::find($request->employee_id);
+        $leave = Leave::create([
+            'employee_id'     => $data['employee_id'],
+            'start_date'     => $data['start_date'],
+            'end_date'     => $data['end_date'],
+            'type'     => $data['type'],
+            'reason'     => $data['reason'],
+            'status'     => $data['status'],
+            'compani_id'  => $userCompany->id,
+        ]);
 
         $this->logActivity(
             'Create Leave',
-            "Membuat leave baru untuk {$employee->name}",
+            "Membuat leave '{$leave->employee->name}'",
             $userCompany->id
         );
 
@@ -74,7 +78,7 @@ class LeaveController extends Controller
     {
         $userCompany = auth()->user()->compani;
 
-        $request->validate([
+        $data = $request->validate([
             'employee_id' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
@@ -83,19 +87,25 @@ class LeaveController extends Controller
             'status' => 'required',
         ]);
 
-        $data = $request->only(['employee_id', 'start_date', 'end_date', 'type', 'reason', 'status']);
+        $leave = Leave::where('id', $id)
+            ->where('compani_id', $userCompany->id)
+            ->firstOrFail();
 
-        $data['compani_id'] = $userCompany->id;
+        $oldContent = $leave->employee->name;
 
-        $leave = Leave::findOrFail($id);
+        $leave->update([
+            'employee_id' => $data['employee_id'],
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'type' => $data['type'],
+            'reason' => $data['reason'],
+            'status' => $data['status'],
+        ]);
 
-        $leave->update($data);
-
-        $name = Employee::find($request->employee_id->name);
 
         $this->logActivity(
             'Update Leave',
-            "{$name}",
+            "Mengubah leave '{$oldContent}' menjadi '{$leave->employee->name}'",
             $userCompany->id
         );
 
@@ -108,18 +118,19 @@ class LeaveController extends Controller
     {
         $userCompany = auth()->user()->compani;
 
-        $leave = Leave::where('id', $id)->where('compani_id', $userCompany->id)->first();
+        $leave = Leave::where('id', $id)
+            ->where('compani_id', $userCompany->id)
+            ->first();
 
-        if ($leave) {
-            $name = $leave->employee->name;
-            $leave->delete();
+        $oldContent = $leave->employee->name;
 
-            $this->logActivity(
-                'Delete Leave',
-                "{$name}",
-                $userCompany->id
-            );
-        }
+        $leave->delete();
+
+        $this->logActivity(
+            'Delete Leave',
+            "Menghapus leave '{$oldContent}'",
+            $userCompany->id
+        );
 
         $this->clearCache($userCompany->id);
 

@@ -30,7 +30,7 @@ class AnnouncementController extends Controller
 
         $cacheKey = "announcements_{$userCompany->id}";
 
-        $announcements = Cache::remember($cacheKey, 60, function () use ($userCompany) {
+        $announcements = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return Announcement::where('compani_id', $userCompany->id)
                 ->latest('created_at')
                 ->get();
@@ -47,13 +47,14 @@ class AnnouncementController extends Controller
             'content'     => 'required|string',
         ]);
 
-        $data['compani_id'] = $userCompany->id;
-
-        Announcement::create($data);
+        $announcement = Announcement::create([
+            'content'     => $data['content'],
+            'compani_id'  => $userCompany->id,
+        ]);
 
         $this->logActivity(
             'Create Announcement',
-            "Menambahkan announcement ({$request->content})",
+            "Menambahkan announcement '{$announcement->content}'",
             $userCompany->id
         );
 
@@ -66,21 +67,23 @@ class AnnouncementController extends Controller
     {
         $userCompany = auth()->user()->compani;
 
-        $request->validate([
-            'content'     => 'required|string',
+        $data = $request->validate([
+            'content' => 'required|string',
         ]);
 
         $announcement = Announcement::where('id', $id)
             ->where('compani_id', $userCompany->id)
             ->firstOrFail();
 
+        $oldContent = $announcement->content;
+
         $announcement->update([
-            'content'     => $request->content,
+            'content' => $data['content'],
         ]);
 
         $this->logActivity(
-            'Update Note',
-            "Mengubah catatan ID #{$announcement->id} dengan {$announcement->content}",
+            'Update Announcement',
+            "Mengubah Announcement '{$oldContent}' menjadi '{$announcement->content}'",
             $userCompany->id
         );
 
@@ -95,17 +98,17 @@ class AnnouncementController extends Controller
 
         $announcement = Announcement::where('id', $id)
             ->where('compani_id', $userCompany->id)
-            ->first();
+            ->firstOrFail();
 
-        if ($announcement) {
-            $announcement->delete();
+        $oldContent = $announcement->content;
 
-            $this->logActivity(
-                'Delete Announcement',
-                "Menghapus announcement {$announcement->content}",
-                $userCompany->id
-            );
-        }
+        $announcement->delete();
+
+        $this->logActivity(
+            'Delete Announcement',
+            "Menghapus announcement '{$oldContent}'",
+            $userCompany->id
+        );
 
         $this->clearCache($userCompany->id);
 

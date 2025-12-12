@@ -30,7 +30,7 @@ class CompanyPayrollConfigController extends Controller
 
         $cacheKey = 'company_payroll_config_' . $userCompany->id;
 
-        $config = Cache::remember($cacheKey, now()->addDay(), function () use ($userCompany) {
+        $config = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return $userCompany->companyPayrollConfig;
         });
 
@@ -69,7 +69,11 @@ class CompanyPayrollConfigController extends Controller
             ]
         );
 
-        $this->logActivity('Update Config', 'Memperbarui konfigurasi payroll perusahaan', $userCompany->id);
+        $this->logActivity(
+            'Update Config',
+            'Memperbarui konfigurasi payroll perusahaan',
+            $userCompany->id
+        );
 
         Cache::forget('company_payroll_config_' . $userCompany->id);
 
@@ -87,6 +91,5 @@ class CompanyPayrollConfigController extends Controller
         ]);
 
         Cache::forget("activities_{$companyId}");
-
     }
 }

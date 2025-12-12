@@ -28,7 +28,7 @@ class AllowController extends Controller
 
         $cacheKey = "allowances_{$userCompany->id}";
 
-        $allowances = Cache::remember($cacheKey, 60, function () use ($userCompany) {
+        $allowances = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return Allow::where('compani_id', $userCompany->id)->get();
         });
 

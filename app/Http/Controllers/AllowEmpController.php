@@ -32,7 +32,7 @@ class AllowEmpController extends Controller
 
         $cacheKey = "allow_emp_{$employeeId}";
 
-        $employeeAllowances = Cache::remember($cacheKey, 60, function () use ($employee) {
+        $employeeAllowances = Cache::remember($cacheKey, 180, function () use ($employee) {
             return $employee->allowEmps()->with('allow')->get();
         });
 

@@ -30,7 +30,7 @@ class DeductController extends Controller
 
         $cacheKey = "deductions_{$userCompany->id}";
 
-        $deductions = Cache::remember($cacheKey, 60, function () use ($userCompany) {
+        $deductions = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return Deduct::where('compani_id', $userCompany->id)->get();
         });
 
@@ -46,11 +46,17 @@ class DeductController extends Controller
             'type' => 'required',
         ]);
 
-        $data['compani_id'] = $userCompany->id;
+        $deduct = Deduct::create([
+            'name'     => $data['name'],
+            'type'     => $data['type'],
+            'compani_id'  => $userCompany->id,
+        ]);
 
-        $deduct = Deduct::create($data);
-
-        $this->logActivity('Create Allowance', "Menambahkan deduction baru: {$deduct->name} ({$deduct->type})", $userCompany->id);
+        $this->logActivity(
+            'Create Allowance',
+            "Menambahkan deduction '{$deduct->name}'",
+            $userCompany->id
+        );
 
         $this->clearCache($userCompany->id);
 
@@ -61,7 +67,7 @@ class DeductController extends Controller
     {
         $userCompany = auth()->user()->compani;
 
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required',
             'type' => 'required',
         ]);
@@ -70,30 +76,18 @@ class DeductController extends Controller
             ->where('compani_id', $userCompany->id)
             ->firstOrFail();
 
-        $oldData = [
-            'name' => $deduct->name,
-            'type' => $deduct->type,
-        ];
+        $oldContent = $deduct->name;
 
-        $newData = [
-            'name' => $request->name,
-            'type' => $request->type,
-        ];
+        $deduct->update([
+            'name' => $data['name'],
+            'type' => $data['type'],
+        ]);
 
-        $deduct->update($newData);
-
-        $changes = [];
-        foreach ($newData as $key => $value) {
-            if ($oldData[$key] != $value) {
-                $fieldLabel = ucfirst(str_replace('_', ' ', $key));
-                $changes[] = "$fieldLabel diubah dari '{$oldData[$key]}' menjadi '{$value}'";
-            }
-        }
-
-        if (!empty($changes)) {
-            $descriptionString = "Update Deduction {$deduct->name}: " . implode(', ', $changes);
-            $this->logActivity('Update Deduction', $descriptionString, $userCompany->id);
-        }
+        $this->logActivity(
+            'Update Deduction',
+            "Mengubah deduction '{$oldContent}' menjadi '{$deduct->name}'",
+            $userCompany->id
+        );
 
         $this->clearCache($userCompany->id);
 
@@ -108,12 +102,15 @@ class DeductController extends Controller
             ->where('compani_id', $userCompany->id)
             ->firstOrFail();
 
-        if ($deduction) {
-            $name = $deduction->name;
-            $deduction->delete();
+        $oldContent = $deduction->name;
 
-            $this->logActivity('Delete Deduction', "Menghapus deduction: {$name}", $userCompany->id);
-        }
+        $deduction->delete();
+
+        $this->logActivity(
+            'Delete Deduction',
+            "Menghapus deduction '{$oldContent}'",
+            $userCompany->id
+        );
 
         $this->clearCache($userCompany->id);
 

@@ -22,7 +22,7 @@ class ActivityLogController extends Controller
 
         $cacheKey = "activities_{$userCompany->id}";
 
-        $logs = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
+        $logs = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return $userCompany->activityLogs()->latest()->get();
         });
 

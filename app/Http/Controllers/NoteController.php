@@ -31,7 +31,7 @@ class NoteController extends Controller
 
         $cacheKey = "notes_{$userCompany->id}";
 
-        $notes = Cache::remember($cacheKey, 60, function () use ($userCompany) {
+        $notes = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return Note::with('employee')
                 ->where('compani_id', $userCompany->id)
                 ->latest('created_at')
@@ -57,23 +57,17 @@ class NoteController extends Controller
             'content'     => 'required|string',
         ]);
 
-        $employee = Employee::where('id', $request->employee_id)
-            ->where('compani_id', $userCompany->id)
-            ->first();
-
-        if (!$employee) {
-            return back()->withErrors(['msg' => 'Employee not found or access denied.']);
-        }
-
-        $data['compani_id'] = $userCompany->id;
-
-        $data['status'] = $request->status ?? 'active';
-
-        Note::create($data);
+        $note = Note::create([
+            'employee_id'     => $data['employee_id'],
+            'note_date'     => $data['note_date'],
+            'type'     => $data['type'],
+            'content'     => $data['content'],
+            'compani_id'  => $userCompany->id,
+        ]);
 
         $this->logActivity(
             'Create Note',
-            "Menambahkan catatan ({$request->type}) untuk {$employee->name}",
+            "Menambahkan catatan ({$note->content}) untuk {$note->employee->name}",
             $userCompany->id
         );
 
@@ -86,7 +80,7 @@ class NoteController extends Controller
     {
         $userCompany = auth()->user()->compani;
 
-        $request->validate([
+        $data = $request->validate([
             'employee_id' => 'required|exists:employees,id',
             'note_date'   => 'required|date',
             'type'        => 'required|string',
@@ -97,25 +91,18 @@ class NoteController extends Controller
             ->where('compani_id', $userCompany->id)
             ->firstOrFail();
 
-        if ($request->employee_id != $note->employee_id) {
-            $validEmployee = Employee::where('id', $request->employee_id)
-                ->where('compani_id', $userCompany->id)
-                ->exists();
-            if (!$validEmployee) abort(403);
-        }
+        $oldContent = $note->content;
 
         $note->update([
-            'employee_id' => $request->employee_id,
-            'note_date'   => $request->note_date,
-            'type'        => $request->type,
-            'content'     => $request->content,
+            'employee_id'     => $data['employee_id'],
+            'note_date'     => $data['note_date'],
+            'type'     => $data['type'],
+            'content'     => $data['content'],
         ]);
-
-        $empName = $note->employee->name ?? 'Unknown';
 
         $this->logActivity(
             'Update Note',
-            "Mengubah catatan ID #{$note->id} milik {$empName}",
+            "Mengubah catatan '{$oldContent}' menjadi '{$note->content}' untuk {$note->employee->name}",
             $userCompany->id
         );
 
@@ -132,16 +119,15 @@ class NoteController extends Controller
             ->where('compani_id', $userCompany->id)
             ->first();
 
-        if ($note) {
-            $empName = $note->employee->name ?? '-';
-            $note->delete();
+        $oldContent = $note->content;
 
-            $this->logActivity(
-                'Delete Note',
-                "Menghapus catatan milik {$empName}",
-                $userCompany->id
-            );
-        }
+        $note->delete();
+
+        $this->logActivity(
+            'Delete Note',
+            "Menghapus catatan '{$oldContent}' untuk {$note->employee->name}",
+            $userCompany->id
+        );
 
         $this->clearCache($userCompany->id);
 

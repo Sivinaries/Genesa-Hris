@@ -30,7 +30,7 @@ class BranchController extends Controller
 
         $cacheKey = "branches_{$userCompany->id}";
 
-        $branches = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($userCompany) {
+        $branches = Cache::remember($cacheKey, 180, function () use ($userCompany) {
             return $userCompany->branches;
         });
 
@@ -50,9 +50,19 @@ class BranchController extends Controller
 
         $data['compani_id'] = $userCompany->id;
 
-        Branch::create($data);
+        $branch = Branch::create([
+            'name'      => $data['name'],
+            'address'   => $data['address'],
+            'phone'     => $data['phone'],
+            'category'  => $data['category'],
+            'compani_id'  => $userCompany->id,
+        ]);
 
-        $this->logActivity('Create Branch', "Membuat cabang baru {$request->name} ({$request->category})", $userCompany->id);
+        $this->logActivity(
+            'Create Branch',
+            "Membuat cabang baru '{$branch->name}'",
+            $userCompany->id
+        );
 
         $this->clearCache($userCompany->id);
 
@@ -78,7 +88,7 @@ class BranchController extends Controller
     {
         $userCompany = auth()->user()->compani;
 
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required',
             'address' => 'required',
             'phone' => 'required',
@@ -89,24 +99,20 @@ class BranchController extends Controller
             ->where('compani_id', $userCompany->id)
             ->firstOrFail();
 
-        $oldData = $branch->only(['name', 'address', 'phone', 'category']);
-        $newData = $request->only(['name', 'address', 'phone', 'category']);
+        $oldContent = $branch->name;
 
-        $branch->update($newData);
+        $branch->update([
+            'name' => $data['name'],
+            'address' => $data['address'],
+            'phone' => $data['phone'],
+            'category' => $data['category'],
+        ]);
 
-        $changes = [];
-        foreach ($newData as $key => $value) {
-            if ($oldData[$key] != $value) {
-                $fieldLabel = $fieldLabel = ucfirst(str_replace('_', ' ', $key));;
-                $changes[] = "$fieldLabel diubah dari '{$oldData[$key]}' menjadi '{$value}'";
-            }
-        }
-
-        if (!empty($changes)) {
-            $descriptionString = "Update Branch {$branch->name}: " . implode(', ', $changes);
-
-            $this->logActivity('Update Branch', $descriptionString, $userCompany->id);
-        }
+        $this->logActivity(
+            'Update Branch',
+            "Mengubah Branch '{$oldContent}' menjadi '{$branch->name}'",
+            $userCompany->id
+        );
 
         $this->clearCache($userCompany->id);
 
@@ -116,15 +122,20 @@ class BranchController extends Controller
     public function destroy($id)
     {
         $userCompany = auth()->user()->compani;
-        
-        $branch = Branch::where('id', $id)->where('compani_id', $userCompany->id)->first();
 
-        if ($branch) {
-            $name = $branch->name;
-            $branch->delete();
+        $branch = Branch::where('id', $id)
+            ->where('compani_id', $userCompany->id)
+            ->firstOrFail();
 
-            $this->logActivity('Delete Branch', "Menghapus cabang: {$name}", $userCompany->id);
-        }
+        $oldContent = $branch->name;
+
+        $branch->delete();
+
+        $this->logActivity(
+            'Delete Branch',
+            "Menghapus cabang '{$oldContent}'",
+            $userCompany->id
+        );
 
         $this->clearCache($userCompany->id);
 
