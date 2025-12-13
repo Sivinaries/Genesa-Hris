@@ -52,99 +52,81 @@ class FingerspotController extends Controller
             'end_date'   => 'required|date|after_or_equal:start_date',
         ]);
 
-        $cloudId  = env('FINGERSPOT_CLOUD_ID');
+        $cloudIds = [
+            env('FINGERSPOT_CLOUD_ID_1'),
+            env('FINGERSPOT_CLOUD_ID_2'),
+        ];
         $apiToken = env('FINGERSPOT_API_TOKEN');
-
-        $currentCompanyId = $userCompany->id;
 
         $startDate = Carbon::parse($request->start_date);
         $endDate   = Carbon::parse($request->end_date);
-
-        $stats = ['processed' => 0, 'new' => 0];
 
         $employeeMap = Employee::whereNotNull('fingerprint_id')
             ->get(['fingerprint_id', 'id', 'compani_id'])
             ->keyBy(fn($e) => (string)$e->fingerprint_id);
 
+        $totalSaved = 0;
+        $allLogs = [];
+
         while ($startDate->lte($endDate)) {
             $currentDateStr = $startDate->format('Y-m-d');
+            $logsPerEmployee = [];
 
-            try {
-                // POST JSON ke API Fingerspot
-                $response = Http::withHeaders([
-                    'Authorization' => 'Bearer ' . $apiToken,
-                ])->withBody(json_encode([
-                    'trans_id' => (string) rand(100000, 999999),
-                    'cloud_id' => $cloudId,
-                    'start_date' => $currentDateStr,
-                    'end_date'   => $currentDateStr,
-                ]), 'application/json')->post('https://developer.fingerspot.io/api/get_attlog');
+            foreach ($cloudIds as $cloudId) {
+                $response = Http::withHeaders(['Authorization' => 'Bearer ' . $apiToken])
+                    ->post('https://developer.fingerspot.io/api/get_attlog', [
+                        'trans_id'   => (string) rand(100000, 999999),
+                        'cloud_id'   => $cloudId,
+                        'start_date' => $currentDateStr,
+                        'end_date'   => $currentDateStr,
+                    ]);
 
                 $result = $response->json();
+                $rawData = $result['data'] ?? [];
 
-                Log::info("Fingerspot response for $currentDateStr", $result);
+                foreach ($rawData as $log) {
+                    $pin = $log['pin'] ?? null;
+                    $scanTimeStr = $log['scan_date'] ?? null;
+                    if (!$pin || !$scanTimeStr) continue;
 
-                if (isset($result['success']) && $result['success']) {
-                    $rawData = $result['data'] ?? [];
-                    $batchStats = $this->processLogs($rawData, $cloudId, $currentCompanyId, $employeeMap);
-                    $stats['processed'] += $batchStats['processed'];
-                    $stats['new'] += $batchStats['new'];
-                } else {
-                    Log::warning("Fingerspot Sync Fail for $currentDateStr: " . ($result['message'] ?? 'Unknown'));
+                    $employee = $employeeMap[(string)$pin] ?? null;
+                    if (!$employee) continue;
+
+                    $dateOnly = date('Y-m-d', strtotime($scanTimeStr));
+                    $scanTime = date('Y-m-d H:i:s', strtotime($scanTimeStr));
+
+                    $key = $employee->id . '|' . $dateOnly;
+                    if (!isset($logsPerEmployee[$key]) || $scanTime < $logsPerEmployee[$key]['scan_time']) {
+                        $logsPerEmployee[$key] = [
+                            'compani_id'        => $employee->compani_id ?? $userCompany->id,
+                            'employee_id'       => $employee->id,
+                            'fingerprint_id'    => $pin,
+                            'device_sn'         => $cloudId,
+                            'scan_time'         => $scanTime,
+                            'verification_mode' => $log['verify'] ?? null,
+                            'scan_status'       => $log['status_scan'] ?? null,
+                            'is_processed'      => false,
+                        ];
+                    }
                 }
-            } catch (\Exception $e) {
-                Log::error("Fingerspot Connection Error for $currentDateStr: " . $e->getMessage());
+            }
+
+            // Save to DB and collect saved logs
+            foreach ($logsPerEmployee as $attendanceData) {
+                $exists = AttendanceLog::where('employee_id', $attendanceData['employee_id'])
+                    ->whereDate('scan_time', date('Y-m-d', strtotime($attendanceData['scan_time'])))
+                    ->exists();
+
+                if (!$exists) {
+                    AttendanceLog::create($attendanceData);
+                    $totalSaved++;
+                    $allLogs[] = $attendanceData;
+                }
             }
 
             $startDate->addDay();
         }
 
-        if ($stats['processed'] > 0) {
-            return back()->with('success', "Sync Completed! Found {$stats['processed']} logs, Saved {$stats['new']} new logs.");
-        } else {
-            return back()->withErrors(['msg' => "No logs found in cloud for the selected range."]);
-        }
-    }
-
-    public function processLogs(array $logs, string $deviceSn, $fallbackCompanyId, $employeeMap)
-    {
-        $processedCount = 0;
-        $newCount       = 0;
-
-        foreach ($logs as $log) {
-            $pin          = $log['pin'] ?? null;
-            $scanTimeStr  = $log['scan_date'] ?? null;
-            $ver          = $log['verify'] ?? null;
-            $statusScan   = $log['status_scan'] ?? null;
-
-            if (!$pin || !$scanTimeStr) continue;
-
-            $scanTime = date('Y-m-d H:i:s', strtotime($scanTimeStr));
-
-            $employee = $employeeMap[(string)$pin] ?? null;
-            if (!$employee) continue; // skip unknown pins
-
-            AttendanceLog::firstOrCreate(
-                [
-                    'fingerprint_id' => $pin,
-                    'scan_time'      => $scanTime,
-                ],
-                [
-                    'compani_id'        => $employee->compani_id,
-                    'employee_id'       => $employee->id,
-                    'device_sn'         => $deviceSn,
-                    'verification_mode' => $ver,
-                    'scan_status'       => $statusScan,
-                    'is_processed'      => false,
-                ]
-            );
-
-            $processedCount++;
-            if (isset($employeeId)) {
-                $newCount++;
-            }
-        }
-
-        return ['processed' => $processedCount, 'new' => $newCount];
+        return redirect()->back()->with('success', "Fetched and saved $totalSaved attendance logs.");
     }
 }
