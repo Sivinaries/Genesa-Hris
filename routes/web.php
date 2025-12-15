@@ -17,6 +17,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OvertimeController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\DeductEmpController;
+use App\Http\Controllers\TaxConfigController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\FingerspotController;
 use App\Http\Controllers\ActivityLogController;
@@ -42,6 +43,7 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/company', [CompaniController::class, 'index'])->name('company');
     Route::get('/addcompany', [CompaniController::class, 'create'])->name('addcompany');
     Route::post('/postcompany', [CompaniController::class, 'store'])->name('postcompany');
+    Route::put('/company/{id}/update', [CompaniController::class, 'update'])->name('updatecompany');
     Route::delete('/company/{id}/delete', [CompaniController::class, 'destroy'])->name('delcompany');
 
     //BRANCH
@@ -146,8 +148,18 @@ Route::middleware('auth:web')->group(function () {
     //ACTIVITY LOG
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activityLog');
 
-    Route::get('/companyconfig', [CompanyPayrollConfigController::class, 'index'])->name('companyconfig');
-    Route::put('/companyconfig/update', [CompanyPayrollConfigController::class, 'update'])->name('updatecompanyconfig');
+    //COMPANY PAYROLL CONFIG
+    Route::get('/companyconfig', [CompanyPayrollConfigController::class, 'index'])->name('companyConfig');
+    Route::put('/companyconfig/update', [CompanyPayrollConfigController::class, 'update'])->name('updatecompanyConfig');
+
+    //COMPANY TAX CONFIG
+    Route::get('/companyconfig/tax', [TaxConfigController::class, 'index'])->name('taxConfig');
+    Route::post('/companyconfig/tax/ptkp', [TaxConfigController::class, 'storePtkp'])->name('postptkp');
+    Route::put('/companyconfig/tax/ptkp/{id}', [TaxConfigController::class, 'updatePtkp'])->name('updateptkp');
+    Route::delete('/companyconfig/tax/ptkp/{id}', [TaxConfigController::class, 'destroyPtkp'])->name('delptkp');
+    Route::post('/companyconfig/tax/ter', [TaxConfigController::class, 'storeTer'])->name('postter');
+    Route::put('/companyconfig/tax/ter/{id}', [TaxConfigController::class, 'updateTer'])->name('updateter');
+    Route::delete('/companyconfig/taxconfig/ter/{id}', [TaxConfigController::class, 'destroyTer'])->name('delter');
 
     //POSITION
     Route::get('/position', [PositionController::class, 'index'])->name('position');

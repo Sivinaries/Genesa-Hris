@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Leave;
+use App\Models\Payroll;
 use App\Models\Overtime;
 use App\Models\Attendance;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -139,13 +141,33 @@ class EssController extends Controller
         return view('ess.note', compact('notes'));
     }
 
+
     public function payroll()
     {
         if (!Auth::guard('employee')->check()) {
             return redirect('/');
         }
 
-        return view('ess.payroll');
+        $payrolls = Auth::guard('employee')->user()->payrolls;
+
+
+
+        return view('ess.payroll', compact('payrolls'));
+    }
+
+    public function downloadPdf($id)
+    {
+        if (!Auth::guard('employee')->check()) {
+            return redirect('/');
+        }
+
+        $payroll = Payroll::with(['employee', 'payrollDetails'])->findOrFail($id);
+
+        $pdf = Pdf::loadView('ess.pdf', compact('payroll'));
+
+        $pdf->setPaper('A4', 'portrait');
+
+        return $pdf->stream('Payslip-' . $payroll->employee->name . '-' . $payroll->pay_period_end . '.pdf');
     }
 
     public function organization()
