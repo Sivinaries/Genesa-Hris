@@ -44,15 +44,17 @@
                 </div>
 
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                    <p class="text-xs text-gray-500 uppercase tracking-wide">Attendance Rate</p>
-                    <h2 class="text-2xl font-bold text-gray-800 mt-1">96%</h2>
-                    <p class="text-xs text-indigo-600 mt-2">Avg monthly</p>
+                    <p class="text-xs text-gray-500 uppercase tracking-wide">Leave Request</p>
+                    <h2 class="text-2xl font-bold text-gray-800 mt-1">{{ $totalLeaves }}</h2>
+                    <p class="text-xs text-emerald-600 mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        +{{ $newLeavesThisMonth }} this month
+                    </p>
                 </div>
 
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                    <p class="text-xs text-gray-500 uppercase tracking-wide">Total Payroll</p>
-                    <h2 class="text-2xl font-bold text-gray-800 mt-1">Rp 370M</h2>
-                    <p class="text-xs text-gray-400 mt-2">Current period</p>
+                    <p class="text-xs text-gray-500 uppercase tracking-wide">Overtime Pay</p>
+                    <h2 class="text-2xl font-bold text-gray-800 mt-1">Rp {{ number_format($totalOvertime, 0, ',', '.') }}</h2>
                 </div>
 
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">

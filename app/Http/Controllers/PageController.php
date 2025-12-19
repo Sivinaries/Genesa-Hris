@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Announcement;
+use Carbon\Carbon;
+use App\Models\Leave;
 use App\Models\Branch;
 use App\Models\Employee;
 use App\Models\Position;
-use Carbon\Carbon;
+use App\Models\Announcement;
+use App\Models\Overtime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -46,9 +48,21 @@ class PageController extends Controller
             ->whereYear('created_at', Carbon::now()->year)
             ->count();
 
+        $totalLeaves = Leave::where('compani_id', $company->id)->count();
+
+        $newLeavesThisMonth = Leave::where('compani_id', $company->id)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->count();
+
+        $totalOvertime = Overtime::where('compani_id', $company->id)->sum('overtime_pay');
+
         return view('dashboard', compact(
             'totalEmployees',
-            'newEmployeesThisMonth'
+            'newEmployeesThisMonth',
+            'totalLeaves',
+            'newLeavesThisMonth',
+            'totalOvertime'
         ));
     }
 
@@ -83,19 +97,19 @@ class PageController extends Controller
 
             // Branches
             $branchesQuery->where(function ($query) use ($searchTerm) {
-                $query->where('name', 'like', '%'.$searchTerm.'%')
-                    ->orWhere('category', 'like', '%'.$searchTerm.'%');
+                $query->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('category', 'like', '%' . $searchTerm . '%');
             });
 
             // Positions
             $positionsQuery->where(function ($query) use ($searchTerm) {
-                $query->where('name', 'like', '%'.$searchTerm.'%')
-                    ->orWhere('category', 'like', '%'.$searchTerm.'%');
+                $query->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('category', 'like', '%' . $searchTerm . '%');
             });
 
             // Announcements
             $announcementsQuery->where(function ($query) use ($searchTerm) {
-                $query->where('content', 'like', '%'.$searchTerm.'%');
+                $query->where('content', 'like', '%' . $searchTerm . '%');
             });
         }
 
