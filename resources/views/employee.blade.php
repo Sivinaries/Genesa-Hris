@@ -33,7 +33,7 @@
         <div class="p-6 space-y-6">
 
             <!-- Header Section -->
-            <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
+            <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800">
                         <i class="fas fa-users text-indigo-600"></i> Employee Management
@@ -73,10 +73,10 @@
                                     <td class="p-4 space-y-1">
                                         <div class="font-medium text-gray-700">{{ $item->position->name ?? '-' }}</div>
                                         <div class="">
-                                            <span
-                                                class="bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5 rounded-full font-bold border border-yellow-200">
-                                                {{ ucfirst(str_replace('_', ' ', $item->status)) }}
-                                            </span>
+                                                <span
+                                                    class="bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5 rounded-full font-bold border border-yellow-200">
+                                                    {{ ucfirst(str_replace('_', ' ', $item->status)) }}
+                                                </span>
                                         </div>
                                     </td>
                                     <td class="p-4 text-xs">
@@ -90,25 +90,31 @@
                                             {{-- Tombol Edit --}}
                                             <button
                                                 class="editBtn w-9 h-9 flex items-center justify-center bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition cursor-pointer"
-                                                data-id="{{ $item->id }}" data-name="{{ $item->name }}"
-                                                data-branch="{{ $item->branch_id }}" data-email="{{ $item->email }}"
-                                                data-nik="{{ $item->nik }}"
-                                                data-fingerprint_id="{{ $item->fingerprint_id }}"
-                                                data-ktp="{{ $item->ktp }}" data-npwp="{{ $item->npwp }}"
+                                                data-id="{{ $item->id }}" 
+                                                data-name="{{ $item->name }}"
+                                                data-branch="{{ $item->branch_id }}" 
+                                                data-email="{{ $item->email }}"
+                                                data-nik="{{ $item->nik }}" 
+                                                data-fingerprint_id="{{ $item->fingerprint_id }}" 
+                                                data-ktp="{{ $item->ktp }}"
+                                                data-npwp="{{ $item->npwp }}"
                                                 data-bpjs-kes-no="{{ $item->bpjs_kesehatan_no }}"
                                                 data-bpjs-tk-no="{{ $item->bpjs_ketenagakerjaan_no }}"
-                                                data-phone="{{ $item->phone }}" data-address="{{ $item->address }}"
+                                                data-phone="{{ $item->phone }}" 
+                                                data-address="{{ $item->address }}"
                                                 data-position-id="{{ $item->position_id }}"
                                                 data-base-salary="{{ $item->base_salary }}"
-                                                data-join="{{ $item->join_date }}" data-status="{{ $item->status }}"
+                                                data-join="{{ $item->join_date }}" 
+                                                data-status="{{ $item->status }}"
                                                 data-ptkp="{{ $item->ptkp_status ?? 'TK/0' }}"
                                                 data-working-days="{{ $item->working_days }}"
                                                 data-payroll-method="{{ $item->payroll_method }}"
                                                 data-part-kes="{{ $item->participates_bpjs_kes }}"
                                                 data-part-tk="{{ $item->participates_bpjs_tk }}"
-                                                data-part-jp="{{ $item->participates_bpjs_jp }}"
+                                                data-part-jp="{{ $item->participates_bpjs_jp }}" 
                                                 data-bank-name="{{ $item->bank_name }}"
-                                                data-bank-no="{{ $item->bank_account_no }}" title="Edit">
+                                                data-bank-no="{{ $item->bank_account_no }}" 
+                                                title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
 
@@ -131,9 +137,7 @@
                                                 action="{{ route('delemployee', ['id' => $item->id]) }}"
                                                 class="inline deleteForm">
                                                 @csrf @method('delete')
-                                                <button type="button"
-                                                    class="delete-confirm w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition cursor-pointer"
-                                                    title="Delete">
+                                                <button type="button" class="delete-confirm w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition cursor-pointer" title="Delete">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -233,23 +237,18 @@
                             <div class="md:col-span-1">
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Branch <span
                                         class="text-red-500">*</span></label>
-                                <select name="branch_id" id="branchSelect"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500"
-                                    required>
+                                <select name="branch_id" id="branchSelect" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
                                     <option value="">-- Select --</option>
-                                    @foreach ($branch as $bra)
+                                    @foreach ($branch as $bra) 
                                         <option value="{{ $bra->id }}" data-category="{{ $bra->category }}">
                                             {{ $bra->name }}
-                                        </option>
+                                        </option> 
                                     @endforeach
                                 </select>
                             </div>
                             <div class="md:col-span-1">
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Position <span
-                                        class="text-red-500">*</span></label>
-                                <select name="position_id" id="positionSelect"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500"
-                                    required>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Position <span class="text-red-500">*</span></label>
+                                <select name="position_id" id="positionSelect" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500" required>
                                     <option value="">-- Select Branch First --</option>
                                 </select>
                             </div>
@@ -276,32 +275,25 @@
 
                     <!-- SECTION 3: Payroll & BPJS -->
                     <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100">
-                        <h3
-                            class="text-sm font-bold text-indigo-700 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <h3 class="text-sm font-bold text-indigo-700 uppercase tracking-wider mb-4 flex items-center gap-2">
                             <i class="fas fa-money-check-alt"></i> Payroll, Tax & Insurance
                         </h3>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
                             <div>
-                                <label id="labelBaseSalary"
-                                    class="block text-xs font-bold text-gray-600 uppercase mb-1">Base Salary (Rp)
+                                <label id="labelBaseSalary" class="block text-xs font-bold text-gray-600 uppercase mb-1">Base Salary (Rp)
                                     <span class="text-red-500">*</span></label>
                                 <input type="text" name="base_salary"
                                     class="currency w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white"
                                     placeholder="0" required>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Work Days <span
-                                        class="text-red-500">*</span></label>
-                                <input type="number" name="working_days" value="27"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white"
-                                    required>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Work Days <span class="text-red-500">*</span></label>
+                                <input type="number" name="working_days" value="27" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white" required>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Payroll
-                                    Method</label>
-                                <select name="payroll_method" id="payrollMethod"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Payroll Method</label>
+                                <select name="payroll_method" id="payrollMethod" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                                     <option value="transfer">Transfer Bank</option>
                                     <option value="cash">Cash (Tunai)</option>
                                 </select>
@@ -311,10 +303,8 @@
                                 <select name="ptkp_status"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                                     <option value="">-- Select PTKP --</option>
-                                    @foreach ($ptkps as $ptkp)
-                                        <option value="{{ $ptkp->code }}">{{ $ptkp->code }}
-                                            ({{ $ptkp->ter_category }})
-                                        </option>
+                                    @foreach($ptkps as $ptkp)
+                                        <option value="{{ $ptkp->code }}">{{ $ptkp->code }} ({{ $ptkp->ter_category }})</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -324,8 +314,7 @@
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Fingerprint.
-                                    Id</label>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Fingerprint. Id</label>
                                 <input type="number" name="fingerprint_id"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                             </div>
@@ -373,22 +362,15 @@
 
                         <!-- ADDED: Bank Details -->
                         <div id="bankAccountSection" class="border-t border-indigo-200 pt-4">
-                            <span
-                                class="text-sm font-bold text-indigo-700 uppercase tracking-wider mb-4 flex items-center gap-2"><i
-                                    class="ri-bank-fill"></i> Bank Account Details</span>
+                            <span class="text-sm font-bold text-indigo-700 uppercase tracking-wider mb-4 flex items-center gap-2"><i class="ri-bank-fill"></i> Bank Account Details</span>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Bank
-                                        Name</label>
-                                    <input type="text" name="bank_name"
-                                        class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white"
-                                        placeholder="e.g. BCA">
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Bank Name</label>
+                                    <input type="text" name="bank_name" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white" placeholder="e.g. BCA">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Account
-                                        Number</label>
-                                    <input type="number" name="bank_account_no"
-                                        class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Account Number</label>
+                                    <input type="number" name="bank_account_no" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                                 </div>
                             </div>
                         </div>
@@ -481,19 +463,17 @@
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
                             <div class="md:col-span-1">
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Branch</label>
-                                <select id="editBranch" name="branch_id"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required>
-                                    @foreach ($branch as $bra)
+                                <select id="editBranch" name="branch_id" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required>
+                                    @foreach ($branch as $bra) 
                                         <option value="{{ $bra->id }}" data-category="{{ $bra->category }}">
                                             {{ $bra->name }}
-                                        </option>
+                                        </option> 
                                     @endforeach
                                 </select>
                             </div>
                             <div class="md:col-span-1">
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Position</label>
-                                <select id="editPositionSelect" name="position_id"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required>
+                                <select id="editPositionSelect" name="position_id" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border" required>
                                     <option value="">-- Select Branch First --</option>
                                 </select>
                             </div>
@@ -531,14 +511,11 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Work Days</label>
-                                <input type="number" id="editWorkingDays" name="working_days"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white" required>
+                                <input type="number" id="editWorkingDays" name="working_days" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white" required>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Payroll
-                                    Method</label>
-                                <select id="editPayrollMethod" name="payroll_method"
-                                    class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white">
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Payroll Method</label>
+                                <select id="editPayrollMethod" name="payroll_method" class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white">
                                     <option value="transfer">Transfer Bank</option>
                                     <option value="cash">Cash (Tunai)</option>
                                 </select>
@@ -548,10 +525,8 @@
                                 <select id="editPtkp" name="ptkp_status"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white">
                                     <option value="">-- Select PTKP --</option>
-                                    @foreach ($ptkps as $ptkp)
-                                        <option value="{{ $ptkp->code }}">{{ $ptkp->code }}
-                                            ({{ $ptkp->ter_category }})
-                                        </option>
+                                    @foreach($ptkps as $ptkp)
+                                        <option value="{{ $ptkp->code }}">{{ $ptkp->code }} ({{ $ptkp->ter_category }})</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -560,9 +535,8 @@
                                 <input type="number" id="editNpwp" name="npwp"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border bg-white">
                             </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Fingerprint.
-                                    Id</label>
+                                                        <div>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Fingerprint. Id</label>
                                 <input type="number" id="editFingerprint" name="fingerprint_id"
                                     class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                             </div>
@@ -617,9 +591,7 @@
 
                         <!-- ADDED: Bank Details Edit -->
                         <div id="editBankAccountSection" class="border-t border-blue-200 pt-4">
-                            <span
-                                class="text-sm font-bold text-indigo-700 uppercase tracking-wider mb-4 flex items-center gap-2"><i
-                                    class="ri-bank-fill"></i> Bank Account Details</span>
+                            <span class="text-sm font-bold text-indigo-700 uppercase tracking-wider mb-4 flex items-center gap-2"><i class="ri-bank-fill"></i> Bank Account Details</span>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Bank
@@ -635,18 +607,17 @@
                                         class="w-full rounded-lg border-gray-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-indigo-500 bg-white">
                                 </div>
                             </div>
-                        </div>
                     </div>
-
-                    <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                        <button type="button" id="closeEditModalBtn"
-                            class="px-6 py-2.5 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition">Cancel</button>
-                        <button type="submit"
-                            class="px-8 py-2.5 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition">Update
-                            Employee</button>
-                    </div>
-                </form>
             </div>
+
+            <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                <button type="button" id="closeEditModalBtn"
+                    class="px-6 py-2.5 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition">Cancel</button>
+                <button type="submit"
+                    class="px-8 py-2.5 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition">Update
+                    Employee</button>
+            </div>
+            </form>
         </div>
     </div>
 
@@ -698,7 +669,7 @@
                     section.addClass('hidden');
                 } else {
                     section.removeClass('hidden');
-                    bankInputs.val('');
+                    bankInputs.val(''); 
                 }
             }
 
@@ -707,8 +678,7 @@
             });
 
             $('#editPayrollMethod').change(function() {
-                toggleBankDetails($(this).val(), '#editBankAccountSection',
-                    '#editBankAccountSection input');
+                toggleBankDetails($(this).val(), '#editBankAccountSection', '#editBankAccountSection input');
             });
 
             toggleBankDetails($('#payrollMethod').val(), '#bankAccountSection', '#bankAccountSection input');
@@ -726,9 +696,7 @@
                 if (category) {
                     const filtered = allPositions.filter(p => p.category === category || p.category === 'general');
                     filtered.forEach(p => {
-                        targetSelect.append(
-                            `<option value="${p.id}" data-salary="${p.base_salary_default}">${p.name}</option>`
-                        );
+                        targetSelect.append(`<option value="${p.id}" data-salary="${p.base_salary_default}">${p.name}</option>`);
                     });
                 }
             }
@@ -741,21 +709,11 @@
                 }
             }
 
-            $('#branchSelect').change(function() {
-                updatePositionDropdown($(this).val(), '#positionSelect');
-            });
+            $('#branchSelect').change(function() {updatePositionDropdown($(this).val(), '#positionSelect');});
+            $('#positionSelect').change(function() {autofillSalary('#positionSelect', 'input[name="base_salary"]');});
 
-            $('#positionSelect').change(function() {
-                autofillSalary('#positionSelect', 'input[name="base_salary"]');
-            });
-
-            $('#editBranch').change(function() {
-                updatePositionDropdown($(this).val(), '#editPositionSelect');
-            });
-
-            $('#editPositionSelect').change(function() {
-                autofillSalary('#editPositionSelect', '#editBaseSalary');
-            });
+            $('#editBranch').change(function() {updatePositionDropdown($(this).val(), '#editPositionSelect');});
+            $('#editPositionSelect').change(function() {autofillSalary('#editPositionSelect', '#editBaseSalary');});
 
             // Modal Logic
             const addModal = $('#addModal');
@@ -803,21 +761,21 @@
                 // Bank Info
                 $('#editBankName').val(btn.data('bank-name'));
                 $('#editBankNo').val(btn.data('bank-no'));
+                let payrollMethod = btn.data('payroll-method');
+                $('#editPayrollMethod').val(btn.data('payroll-method'));
 
-                toggleBankDetails(payrollMethod, '#editBankAccountSection',
-                    '#editBankAccountSection input');
-
+                toggleBankDetails(payrollMethod, '#editBankAccountSection', '#editBankAccountSection input');
+            
                 // Checkboxes
                 $('#editBpjsKes').prop('checked', btn.data('part-kes') == 1);
                 $('#editBpjsTk').prop('checked', btn.data('part-tk') == 1);
                 $('#editBpjsJp').prop('checked', btn.data('part-jp') == 1);
 
                 $('#editWorkingDays').val(btn.data('working-days'));
-                $('#editPayrollMethod').val(btn.data('payroll-method'));
 
                 updatePositionDropdown(btn.data('branch'), '#editPositionSelect');
                 setTimeout(() => {
-                    $('#editPositionSelect').val(btn.data('position-id'));
+                    $('#editPositionSelect').val(btn.data('position-id')); 
                 }, 50);
 
                 $('#editForm').attr('action', `/employee/${id}/update`);

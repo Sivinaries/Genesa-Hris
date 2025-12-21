@@ -16,16 +16,16 @@
         <div class="p-6 space-y-6">
 
             <!-- Header -->
-            <div class="md:flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-2 md:space-y-0">
+            <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
                         <i class="fas fa-money-check-alt text-indigo-600"></i> Payroll History
                     </h1>
                     <p class="text-sm text-gray-500">List of generated payroll periods</p>
                 </div>
-                <a href="{{ route('createpayroll') }}" 
-                   class="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition font-semibold flex items-center gap-2 w-fit">
-                   <i class="fas fa-plus"></i> Run Payroll
+                <a href="{{ route('createpayroll') }}"
+                    class="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition font-semibold flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Run Payroll
                 </a>
             </div>
 
@@ -64,18 +64,17 @@
                                 <tr class="hover:bg-cyan-50 transition group">
                                     <td class="p-4">
                                         <div class="flex flex-col">
-                                            <a href="{{ route('periodPayrollBranch', ['start' => $batch->pay_period_start, 'end' => $batch->pay_period_end]) }}" 
-                                           class="text-lg font-bold text-indigo-600 mb-1">
-                                            {{ \Carbon\Carbon::parse($batch->pay_period_start)->format('d M Y') }} - 
-                                            {{ \Carbon\Carbon::parse($batch->pay_period_end)->format('d M Y') }}
-                                        </a>
+                                            <a href="{{ route('periodPayrollBranch', ['start' => $batch->pay_period_start, 'end' => $batch->pay_period_end]) }}"
+                                                class="text-lg font-bold text-indigo-600 mb-1">
+                                                {{ \Carbon\Carbon::parse($batch->pay_period_start)->format('d M Y') }} -
+                                                {{ \Carbon\Carbon::parse($batch->pay_period_end)->format('d M Y') }}
+                                            </a>
                                             <span class="text-xs text-gray-400">Created:
                                                 {{ \Carbon\Carbon::parse($batch->created_at)->diffForHumans() }}</span>
                                         </div>
                                     </td>
                                     <td class="p-4 text-center">
-                                        <span
-                                            class="font-bold text-gray-800 text-base">
+                                        <span class="font-bold text-gray-800 text-base">
                                             {{ $batch->total_branches }}
                                         </span>
                                     </td>
@@ -113,10 +112,10 @@
                                             </a>
 
                                             <!-- TOMBOL EXPORT REPORT EXCEL -->
-                                            <a href="{{ route('payrollReportExport', ['start' => $batch->pay_period_start, 'end' => $batch->pay_period_end]) }}" 
-                                                class="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-full transition shadow-sm" 
+                                            <a href="{{ route('payrollReportExport', ['start' => $batch->pay_period_start, 'end' => $batch->pay_period_end]) }}"
+                                                class="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-full transition shadow-sm"
                                                 title="Download Laporan Lengkap">
-                                                    <i class="fas fa-chart-pie"></i>
+                                                <i class="fas fa-chart-pie"></i>
                                             </a>
 
                                             <!-- TOMBOL DELETE BATCH -->
@@ -162,11 +161,6 @@
                             @endforelse
                         </tbody>
                     </table>
-
-                    <!-- Pagination -->
-                    <div class="mt-4 px-2">
-                        {{ $batches->links() }}
-                    </div>
                 </div>
             </div>
         </div>
