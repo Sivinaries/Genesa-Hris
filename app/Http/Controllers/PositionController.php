@@ -116,6 +116,8 @@ class PositionController extends Controller
             $userCompany->id
         );
 
+        $this->clearCache($userCompany->id);
+
         return redirect(route('position'))->with('success', 'Position deleted successfully!');
     }
 

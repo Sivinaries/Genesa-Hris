@@ -72,7 +72,7 @@ class PageController extends Controller
         $alpha   = $attendance->pluck('total_alpha');
         $leave   = $attendance->pluck('total_leave');
 
-        $batches = $company->payrolls()
+        $batches = $userCompany->payrolls()
             ->join('employees', 'payrolls.employee_id', '=', 'employees.id')
             ->select(
                 'payrolls.pay_period_start',

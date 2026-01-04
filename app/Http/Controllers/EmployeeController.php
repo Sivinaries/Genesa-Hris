@@ -146,6 +146,12 @@ class EmployeeController extends Controller
             $data['password'] = bcrypt($data['password']);
         }
 
+        // Jika metode payroll CASH, hapus data bank
+        if ($data['payroll_method'] === 'cash') {
+            $data['bank_name'] = null;
+            $data['bank_account_no'] = null;
+        }
+
         $data['compani_id'] = $userCompany->id;
 
         // Update dengan security check (hanya milik company user)
@@ -167,7 +173,7 @@ class EmployeeController extends Controller
         }
 
         if (! empty($changes)) {
-            $desc = "Update Employee {$employee->name}: ".implode(', ', $changes);
+            $desc = "Update Employee {$employee->name}: " . implode(', ', $changes);
         } else {
             $desc = "Update Employee {$employee->name} (Minor details)";
         }
