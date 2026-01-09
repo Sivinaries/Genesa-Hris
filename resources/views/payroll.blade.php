@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Payroll History</title>
+<title>Riwayat Penggajian</title>
     @include('layout.head')
     <link href="//cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -19,13 +19,13 @@
             <div class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <div>
                     <h1 class="font-bold text-2xl text-gray-800 flex items-center gap-2">
-                        <i class="fas fa-money-check-alt text-indigo-600"></i> Payroll History
+                        <i class="fas fa-money-check-alt text-indigo-600"></i> Riwayat Penggajian
                     </h1>
-                    <p class="text-sm text-gray-500">List of generated payroll periods</p>
+                    <p class="text-sm text-gray-500">Daftar periode penggajian yang telah dibuat</p>
                 </div>
                 <a href="{{ route('createpayroll') }}"
                     class="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition font-semibold flex items-center gap-2">
-                    <i class="fas fa-plus"></i> Run Payroll
+                    <i class="fas fa-plus"></i> Jalankan Penggajian
                 </a>
             </div>
 
@@ -53,10 +53,10 @@
                     <table class="w-full text-left">
                         <thead class="bg-gray-100 text-gray-600 text-sm leading-normal">
                             <tr>
-                                <th class="p-4 font-bold">Period Range</th>
-                                <th class="p-4 font-bold text-center">Total Branches</th>
-                                <th class="p-4 font-bold text-center">Total Expense</th>
-                                <th class="p-4 font-bold text-center">Action</th>
+                                <th class="p-4 font-bold">Periode</th>
+                                <th class="p-4 font-bold text-center">Total Cabang</th>
+                                <th class="p-4 font-bold text-center">Total Pengeluaran</th>
+                                <th class="p-4 font-bold text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm">
@@ -154,9 +154,8 @@
                                                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
                                                 </path>
                                             </svg>
-                                            <p class="text-lg font-medium">No payroll history found</p>
-                                            <p class="text-sm mt-1">Click "Run Payroll" to generate your first salary
-                                                slip.</p>
+                                            <p class="text-lg font-medium">Tidak ada riwayat penggajian</p>
+                                            <p class="text-sm mt-1">Klik "Jalankan Penggajian" untuk membuat slip gaji pertama Anda.</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -174,8 +173,8 @@
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 Swal.fire({
-                    title: 'Delete this period?',
-                    text: "This will delete ALL salary slips for this period. This action cannot be undone!",
+                    title: 'Hapus periode ini?',
+                    text: "Ini akan menghapus SEMUA slip gaji untuk periode ini. Tindakan ini tidak dapat dibatalkan!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
